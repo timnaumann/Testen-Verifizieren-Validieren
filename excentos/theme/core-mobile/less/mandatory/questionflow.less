@@ -1,0 +1,41 @@
+//********** questionflow ***********//
+
+.xc_phase.xc_notinview,
+.xc_stage.xc_notinview,
+.xc_invisible, .xc_hidden {
+	display: none !important;
+}
+
+.xc_unset {
+	display: none;
+}
+
+//***** Explanation trigger display logic *****//
+.xc_explanation_trigger {
+	display: none;		// hide trigger by default 
+	.xc_has_explanation & {
+		display: block;		// show when state has an explanation
+	}
+	.xc_endgame & {
+		display: none;		// NEVER show explanations within recommendations
+	}
+}
+
+
+//***** Collapser trigger display logic *****//
+.xc_collapser_node.xc_label:after {
+	content: "";		// create the :after object ONLY when trigger class is set
+}
+
+
+//***** Labels display logic *****//
+.xc_label:empty {
+	display: none;		// hide empty labels to prevent spacing issues
+}
+
+.xc_collapsible .xc_collapsible_node.xc_collapsible_collapsed {
+	height: 0px;
+	overflow: hidden;
+	-webkit-backface-visibility: hidden; //Chrome 38.0.2125.104m wasnt hiding the closed content
+}
+

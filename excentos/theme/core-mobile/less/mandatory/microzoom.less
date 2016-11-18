@@ -1,0 +1,35 @@
+#xc_microzoom_underlay{
+    /*the parent serves as a white underlay for the cases when the adress bar appears or disappears 
+ (page content flashes through)
+  MUST be a direct child of the body tag*/
+	position: absolute;
+	top:0px; 
+	left:0px; 
+	width:100%;
+	border:none; 
+	margin:0; 
+	padding:0; 
+	background-color: white;
+	overflow:hidden; 
+	z-index:999998; /*one below!*/
+	#zoom_underlay();
+}
+.xc_microzoom_canvas{
+	/* TODO a waiting game background image would be nice - aber keine ahnung wie das onne extra DOM gehen soll. */
+	position:fixed; 
+	top:0px; 
+	left:0px; 
+	bottom:0px; 
+	right:0px; 
+	width:100%; 
+	height:100%; 
+	border:none; 
+	margin:0; 
+	padding:0; 
+	z-index:999999;
+	#zoom_canvas();		
+	.xc_microzoom_close {
+		#zoom_close();
+	}
+}
+

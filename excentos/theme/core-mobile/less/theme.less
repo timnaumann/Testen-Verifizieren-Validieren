@@ -1,0 +1,38 @@
+//***** MIXINS, HELPERS & RESET *****// 
+@import "../../../less/bootstrap-mixins.less";
+@import "../../../less/excentos-mixins.less";
+// typically don't use a reset because we're running _inside_ the customer page.
+// in cases where we're the only content please use http://necolas.github.io/normalize.css/ 	
+@import "_helpers.less";		// Move to core??
+
+//**** IMPORT PLATFORM REQUIREMENTS ****//
+//NOTE: there is an lessc issue with resolving the correct path, when used in xcProjects/
+@import (inline) "../../../../dojotoolkit/dijit/themes/dijit.css"; // dijit core styling (e.g. for slider layout)
+@import "../../../less/editables.less"; // "pommes" styles
+@import "../../../less/devinfobutton.less"; // dev tools
+
+//***** DEFAULT STYLING AND VARIABLES REFERENCE *****//
+@import "sprites.less";		// Fireworks sprite references (!!!edited!!! - see file) 
+@import "variables.less";		// Global colors and spacing
+@import "objects.less";		// Project specific styling and positioning of page elements
+
+//*** IMPORT DEFAULT STYLING OF MANDATORY WIDGETS ***//
+@import "mandatory/init.less"; 
+@import "mandatory/questionflow.less";
+@import "mandatory/wizard.less";
+@import "mandatory/phaseNavigation.less";
+@import "mandatory/stageInPathNavigation.less";
+@import "mandatory/facet-and-state.less";
+@import "mandatory/enrichments.less";
+@import "mandatory/refinements.less";
+@import "mandatory/recommendations.less";
+@import "mandatory/dialog.less";
+@import "mandatory/microzoom.less";
+@import "mandatory/transitions.less";
+
+///**** IMPORT DEFAULT STYLING OF OPTIONAL WIDGETS 
+//   (do not uncomment here, (copy to project theme.less 
+//    and comment in there as needed and used)          ***/
+
+@import "optional/imagezoom.less";
+@import "optional/selectiontags.less";

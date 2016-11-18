@@ -1,0 +1,125 @@
+//*****   Slider  *****//
+.xc_slider {
+	padding-bottom: @slider_track_bottomclick;
+	.clearfix();
+	table.dijitSliderH {			// the visible track
+		border-collapse: separate; //allow border-radius
+		#input_slider_track();
+		height: @slider_track_height;
+		margin: @slider_track_topclick @slider_track_padding  @slider_track_bottomclick @slider_track_padding;
+	}
+	.dijitSliderLeftBumper {
+		background: none;		// overwrite dijit
+	}
+	.dijitSliderBumperH {
+		width: (@slider_handle_width / 2);
+		margin-top: -@slider_track_topclick;
+		margin-bottom: -@slider_track_bottomclick;
+		height: (@slider_track_height + @slider_track_topclick + @slider_track_bottomclick);
+		border: none;		// overwrite dijit
+	}
+
+	.dijitSliderProgressBarH {		// progress - unused
+		height: @slider_track_height;
+		margin-top: @slider_track_topclick;
+		background: none;		// overwrite dijit
+		border: none;		// overwrite dijit
+	}
+
+	.dijitSliderRemainingBarH {		// the clickable area
+		margin-top: -@slider_track_topclick;
+		margin-bottom: -@slider_track_bottomclick;
+		height: (@slider_track_height + @slider_track_topclick + @slider_track_bottomclick);
+		border: none;		// overwrite dijitbackground: red;
+	}
+
+	.dijitSliderMoveableH {
+		-ms-touch-action: none;			// tap default event - IE (improves reaction in IE mobile)
+		top: (-(@slider_handle_height - @slider_track_height) /2);
+		width: 0;
+	}
+
+	.dijitSliderImageHandleH {
+		border: none;		// overwrite dijit
+		top: 0;		// overwrite dijit
+		left: (-@slider_handle_width / 2);
+		#input_slider_handle();
+	}
+	&.xc_user_answered .dijitSliderImageHandleH {
+		#input_slider_handle_active();
+	}
+
+	//****   Slider Handle Pop-up   *****//
+	.dijitSliderMoveableH .xc_label {
+		> .xc_unit {display:none;}
+		> .xc_value {white-space: nowrap;}
+		&:after {
+			bottom: (-@slider_popup_connector_width * 2);
+			border: solid transparent;
+			content: "";
+			height: 0;
+			width: 0;
+			position: absolute;
+			border-color: transparent;
+			border-width: @slider_popup_connector_width;
+		}
+		#input_slider_popup();
+
+		.xc_orientation_left& {
+			left: ((-@slider_handle_width / 2) - @slider_track_padding);
+			&:after {
+				left: (((@slider_handle_width / 2) + @slider_track_padding) - @slider_popup_connector_width);
+			}
+		}
+		.xc_orientation_center& {
+			left: (-@slider_popup_width / 2);
+			&:after {
+				left: ((@slider_popup_width / 2) - @slider_popup_connector_width);
+			}
+		}
+		.xc_orientation_right& {
+			right: ((-@slider_handle_width / 2) - @slider_track_padding);
+			&:after {
+				right: (((@slider_handle_width / 2) + @slider_track_padding) - @slider_popup_connector_width);
+			}
+		}
+	}
+	&.xc_user_answered .dijitSliderMoveableH .xc_label {
+		#input_slider_popup_active();
+		> .xc_unit {display:inline;}
+		> .xc_value {white-space: normal;}
+	}
+
+	.dijitRuleLabelsContainerH {
+		white-space: nowrap;
+		position: relative;
+		overflow: visible;
+	}
+	.dijitRuleLabelH {
+		#input_slider_rulelabel();
+	}
+	.xc_first .dijitRuleLabelH {
+		left: 0;
+		margin-left: (-@slider_handle_width / 2);
+	}
+	.xc_last .dijitRuleLabelH {
+		left: -100%;
+		margin-right: (-@slider_handle_width / 2);
+	}
+}
+
+// !!! DISABLED !!!
+//****    Slider Popup Transitions   *****//
+//.xc_slider .dijitSliderH .dijitSliderMoveable .xc_label:empty {
+//	display: none;
+//}
+//.dijitSliderMoveable .xc_label {
+//    -webkit-transition: opacity 0.3s ease-in-out;
+//    -moz-transition: opacity 0.3s ease-in-out;
+//    -ms-transition: opacity 0.3s ease-in-out;
+//    -o-transition: opacity 0.3s ease-in-out;
+//     opacity: 0;
+//}
+//.dojoMove .xc_user_answered .dijitSliderFocused .dijitSliderMoveable .xc_label {
+//	opacity: 1;
+//}

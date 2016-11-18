@@ -1,0 +1,57 @@
+.xc_endgame .xc_wrapper_questions .xc_topic_label {
+	.isClickable();
+	#refinement_button();
+	&.xc_collapsible_expanded {
+		#refinement_button_active();
+	}
+}
+
+.xc_widget_facetgroup_Explorer {
+	#refinement_wrapper();
+
+	.xc_widget_facetgroup_ExplorerFacetGroup > .xc_facetgroup_label {		// first level heading
+		position: relative;
+		.isClickable();
+		#refinement_option();
+	} 
+
+	.xc_widget_facetgroup_ExplorerFacetGroup > .xc_facetgroup_label.xc_collapsible_expanded{		// first level heading
+		#refinement_option_active();
+	} 
+
+	.xc_question,
+	.xc_widget_facetgroup_RefinementFacetGroup .xc_facetgroup > .xc_facetgroup_label { 
+		#refinement_question();
+	}
+
+	
+	.xc_state .xc_label_wrapper {		// input options (2nd level)
+		#refinement_state();
+	}
+
+	.xc_options,
+	.xc_slider {
+		#refinement_state_wrapper();
+	}
+
+	//core - .xc_widget_facetgroup_RefinementFacetGroup > .xc_subfacetgroups > .xc_facet > .xc_facetsingroup,  
+	//core - .xc_widget_facetgroup_RefinementFacetGroup > .xc_subfacetgroups > .xc_facet > .xc_subfacetgroups,
+	> .xc_subfacetgroups > .xc_widget_facetgroup_RefinementFacetGroup > .xc_collapsible > .xc_facetsingroup,
+	> .xc_subfacetgroups > .xc_widget_facetgroup_RefinementFacetGroup > .xc_collapsible > .xc_subfacetgroups {
+		#refinement_option_wrapper();
+	}
+
+	//clean stacking - margins
+	.xc_facet,
+	.xc_state,
+	.xc_question {
+		margin: 0;
+	}
+	// clean stacking - empty elements
+	.xc_facetsingroup:empty,
+	.xc_subfacetgroups:empty,
+	.xc_facetgroup_label:empty,
+	.xc_question:empty {
+		display: none;
+	}
+}

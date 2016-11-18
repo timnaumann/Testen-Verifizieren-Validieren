@@ -1,0 +1,48 @@
+.xc_smartscroll_target {
+	/* debug */
+	/*
+	&.xc_smartscroll_mode_unknown {border: 1px dashed black;}
+	&.xc_smartscroll_mode_idle {border: 1px solid green;}
+	&.xc_smartscroll_mode_stick {border: 1px solid yellow;}
+	&.xc_smartscroll_mode_stickscroll {border: 1px solid red;}*/
+	
+	&.xc_smartscroll_mode_stick {
+		position: fixed;
+		top: 0px;
+		
+		&.xc_smartscroll_down {
+			.animation(smartscrollSlideDown .5s ease-out);
+		}
+		
+		&.xc_smartscroll_up {
+			.animation(smartscrollSlideUp .3s ease-out);
+		}
+	}
+	
+	&.xc_smartscroll_mode_stickscroll {
+		position: absolute;
+	}
+}
+
+@-webkit-keyframes smartscrollSlideUp {
+  	 from {.translate(0, 20px);}
+  	 to	  {.translate(0, 0px);}
+}
+@keyframes smartscrollSlideUp {
+  	 from {.translate(0, 20px);}
+  	 to	  {.translate(0, 0px);}
+}
+
+//a little bounce ; NOTE quic-bezier is not supported well enough to create a bounce effect
+@-webkit-keyframes smartscrollSlideDown {
+  	  0% {.translate(0, -20px);}
+  	 30% {.translate(0, 30px);}
+	100% {.translate(0, 0px);}
+}
+@keyframes smartscrollSlideDown {
+  	  0% {.translate(0, -20px);}
+  	 30% {.translate(0, 30px);}
+	100% {.translate(0, 0px);}
+}
+
+

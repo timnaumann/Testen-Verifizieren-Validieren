@@ -1,0 +1,11 @@
+<div class="xc_state" data-dojo-attach-event="onclick:_onClick, onmouseenter:_onMouseOver, onmouseleave:_onMouseOut">
+	<div class="xc_state_inner">
+		<div class="xc_label_wrapper">
+			<div class="xc_input"><!-- Input element background image here. --></div>
+			<div class="xc_explanation_trigger" data-dojo-attach-point="explanationTriggerNode" data-explanation-event-type="click" data-explanation-type="widget.explanation.handler.DisplayWidgetHandlerFactory"></div>
+			<div class="xc_label">%{state.longLabel} %{facetWidget.facetInGroup.unit}<span class="xc_product_count" data-dojo-attach-point="matchingProductCountNode"></span></div>
+			<div class="xc_longText">%{state.contentItems.longText}</div>
+		</div>
+		<div data-xc-type="widget.explanation.displayWidget.DisplayWidget" data-dojo-attach-point="explanationDisplayWidget" data-dojo-attach-event="click:_handleDisplayWidgetClick"></div>
+	</div>
+</div>

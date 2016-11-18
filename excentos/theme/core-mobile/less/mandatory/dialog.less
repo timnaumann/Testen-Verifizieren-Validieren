@@ -1,0 +1,60 @@
+//********** Dialog ***********//
+.xc_dialog {
+	#dialog_wrapper();
+	.box-sizing(border-box);
+	
+	* {
+		.box-sizing(border-box);
+	}
+    
+    .xc_dialog_header {
+    	position:relative;
+    }
+
+	.xc_dialog_close_icon {
+		#dialog_close();
+	}
+	
+	.xc_dialog_close_text {
+	    display: none;
+	}
+	
+	.xc_dialog_title {
+		#dialog_header();
+	}
+	
+	.xc_heading {
+		#dialog_header();
+	}
+	
+	.xc_button {
+		#dialog_button();
+	}
+}
+.dijitDialogUnderlay {
+	#dialog_underlay();
+}
+
+//********** ErrorDialog ***********//
+#xc_service_error_dialog {
+	
+	//override inline styles
+	position: fixed !important;
+	left: 50% !important;
+	top: 15% !important;
+	//has a fixed size on mobile devices
+	width: 320px;
+	margin-left: -160px;
+	
+	.dijitDialogPaneContent {
+		//has a fixed size on mobile devices
+		width: 100% !important;
+	}
+	
+	.xc_dialog_close_icon {
+		display: none; //in case of an error - the application is not usable anymore; so closing the dialog would not help
+	}
+	.xc_dialog_header {
+		display: none; //header bar is hidden
+	}
+}

@@ -1,0 +1,24 @@
+output_small {
+  font-size: 10px;
+  line-height: 12px;
+}
+output_mid {
+  font-size: 10px;
+  line-height: 20px;
+}
+output_mid2 {
+  font-size: 10px;
+  line-height: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+output_large {
+  font-size: 10px;
+  line-height: 20px;
+}
+output_large2 {
+  font-size: 10px;
+  line-height: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}

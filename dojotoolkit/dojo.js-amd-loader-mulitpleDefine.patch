@@ -1,0 +1,74 @@
+Index: dojo/dojo.js
+===================================================================
+--- dojo/dojo.js
++++ dojo/dojo.js
+@@ -1601,11 +1601,11 @@
+ 
+ 				return module;
+ 			},
+-
++			
+ 			runDefQ = function(referenceModule, mids){
+ 				// defQ is an array of [id, dependencies, factory]
+ 				// mids (if any) is a vector of mids given by a combo service
+-				var definedModules = [],
++				var definedModules = [], definedModule, referenceModuleDefinition,
+ 					module, args;
+ 				while(defQ.length){
+ 					args = defQ.shift();
+@@ -1614,7 +1614,54 @@
+ 					// processed since modules earlier in the queue depend on already-arrived modules that are later in the queue
+ 					// TODO: what if no args[0] and no referenceModule
+ 					module = (args[0] && getModule(args[0])) || referenceModule;
+-					definedModules.push([module, args[1], args[2]]);
++					
++					definedModule = [module, args[1], args[2]];
++					//lucas@excentos.com
++					/* case
++							<script>define(...),define(...),define(...)</script>
++							<script src="dojo.js" data-dojo-config="deps:['myRealAmdModule']"></script>
++							(via AMD inject due deps)<script src="myRealAmdModule.js">define(...)</script>
++							
++							onload =>
++								runDefQ({"myRealAmdModule"})
++								
++								while()...
++								
++								definedModules[
++									{"myRealAmdModule", factory:<wrong>}
++									{"myRealAmdModule", factory:<wrong>}
++									{"myRealAmdModule", factory:<wrong>}
++									{"myRealAmdModule", factory:<correct>}
++								]
++							
++							this leads to definedModules  containing 4 times a definition for the same moduleId "myRealAmdModule"
++							-> multipleDefine Error
++							
++							 assure that we are only changing behavior for our modules ->
++							  	circumvent by only applying the last definition in case the referenceModule.mid
++								can be found in dojoConfig.paths
++							
++					*/
++
++					//lucas@excentos.com 
++					// is `module` one of those we care about ?  
++					//	update the reference to the most recent module (the last thing in the queue should belong to our module, due single-threaded execution cosntraints) : 
++					if(module === referenceModule && runMapProg(module.mid, pathsMapProg)){
++						//keep a reference to the thing that claims to be the definition for OUR module, in case we need to `correct` it
++						if(referenceModuleDefinition){
++							//correct the reference instead of pushing multiple definition of ONE module
++							has("config-isDebug") && console.info("updating definition for mid '"+module.mid+"' from `"+referenceModuleDefinition[2]+"` to `"+definedModule[2]+"`");
++							
++							referenceModuleDefinition[1] = definedModule[1];
++							referenceModuleDefinition[2] = definedModule[2];
++							//skip push to `definedModules` / deny multiple definitions
++							definedModule = null;
++						}else {
++							referenceModuleDefinition = definedModule;
++						}
++					}
++				
++					definedModule && definedModules.push(definedModule);
+ 				}
+ 				consumePendingCacheInsert(referenceModule);
+ 				forEach(definedModules, function(args){

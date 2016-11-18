@@ -1,0 +1,94 @@
+#xc_development_dashboard {
+	position: fixed;
+	z-index: 99996;
+	left: 25px;
+	top: 25px;
+	width: 350px;
+	height: 350px;
+	background: #fff;
+	font-size: 12px;
+	font-family: Verdana, sans-serif;
+	text-align: left;
+	border: #E4213E solid 1px;
+}
+#xc_development_dashboard_inner {
+	padding: 9px;
+}
+#xc_development_dashboard_main_heading {
+	cursor: move;
+	margin-bottom: .3em;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+#xc_development_dashboard .xc_label,
+#xc_development_dashboard .xc_name	{
+	font-size: 12px;
+	font-weight: bold;
+	width: 134px;
+	display: inline-block;
+}
+#xc_development_dashboard .xc_name {
+	width: auto;
+}
+#xc_development_dashboard .xc_value {
+	font-size: 12px;
+}
+#xc_development_dashboard .xc_link {
+	font-size: 12px;
+	background: #333;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	color: #fff;
+	display: inline-block;
+	padding: 2px 4px;
+	cursor: pointer;
+	white-space: nowrap;
+	margin: 2px;
+}
+#xc_development_dashboard .xc_link:hover {
+	background: #000;
+}
+#xc_development_dashboard p {
+	margin: 1px;
+}
+
+#xc_development_dashboard .xc_stages {
+	margin: 0 0 .7em;
+}
+#xc_development_dashboard .xc_stages .xc_name {
+	cursor: pointer;
+}
+
+#xc_development_dashboard .xc_qf {
+	font-size: 12px;
+	background: #FF816E;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	color: #fff;
+	padding: 2px 4px;
+	cursor: pointer;
+	-webkit-transition: background-color 0.15s ease-out;
+	 -moz-transition: background-color 0.15s ease-out;
+	transition: background-color 0.15s ease-out;
+}
+#xc_development_dashboard .xc_qf:hover {
+	background: #D76C5F;
+}
+#xc_development_dashboard .xc_client {
+	font-size: 12px;
+	background: #A5D766;
+	color: #333;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	padding: 2px 4px;
+	cursor: pointer;
+	-webkit-transition: background-color 0.15s ease-out;
+	-moz-transition: background-color 0.15s ease-out;
+	transition: background-color 0.15s ease-out;
+}
+#xc_development_dashboard .xc_client:hover {
+	background: #94C05B;
+}

@@ -1,0 +1,4 @@
+define([
+    "../globals",
+	"./EventDispatcher"
+], function(){});

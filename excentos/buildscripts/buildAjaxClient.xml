@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<!-- =================================
+	  ATTENTION: CAN ONLY BE RUN FROM THE MAIN build.xml file
+	 ================================= -->
+
+<project default="buildAjaxClient" basedir="${build.ajaxclient.dir}" name="ajaxClient">
+	<property name="ajaxclient.source" value="${basedir}/WebContent/ajaxclient" />
+	<property name="ajaxclient.release" value="${basedir}/release/ajaxclient" />
+
+	<!-- =================================
+          target: buildAjaxClient
+         ================================= -->
+	<target name="buildAjaxClient" description="runs the build process for ajaxClient">
+
+		<!-- the build process requires more memory as normal.
+			That why we start it in the separate jvm (with fork="true")
+			and give more memory (with maxmemory).
+			failonerror="true" is needed in order the build fails
+			if any error or exception occur during the build.
+		-->
+		<java classname="org.mozilla.javascript.tools.shell.Main"
+				fork="true"
+				dir="${build.ajaxclient.dir}/../../dojotoolkit/util/buildscripts"
+				maxmemory="456m"
+				failonerror="true">
+
+			<classpath>
+				<pathelement location="${build.ajaxclient.dir}/../../dojotoolkit/util/shrinksafe/js.jar"/>
+				<pathelement location="${build.ajaxclient.dir}/../../dojotoolkit/util/shrinksafe/shrinksafe.jar"/>
+				<pathelement location="${build.ajaxclient.dir}/../../dojotoolkit/util/closureCompiler/compiler.jar"/>
+			</classpath>
+
+			<arg value="${build.ajaxclient.dir}/../../dojotoolkit/dojo/dojo.js"/>
+			<arg value="baseUrl=${build.ajaxclient.dir}/../../dojotoolkit/dojo"/>
+			<arg value="load=build"/>
+			<arg value="profile=${build.ajaxclient.dir}/../../../../../conf-build/ajaxclient.profile.js"/>
+			<arg value="--release"/>
+		</java>
+
+		<antcall target="shrink-jsinit"/>
+		<antcall target="useXcRequire"/>
+		<antcall target="buildInfo"/>
+	</target>
+
+	<target name="useXcRequire" description="replaces all occurences of `require` with `xcrequire`">
+		<replaceregexp match="\brequire|define\b" replace="xc\0" flags="g" byline="false">
+			<fileset dir="${basedir}/release/" includes="**/*.js,**/*.html,**/ajaxInit.gstring" excludes="**/.nodejs/*"/>
+		</replaceregexp>
+
+		<!-- create robust fallback to require()/define() in cases where xcrequire()/xcdefine() was not viable -->
+		<replaceregexp match="\b(xc(require|define))\(" replace="(window.\1||window.\2)\(" flags="g" byline="false">
+			<fileset dir="${basedir}/release/" includes="**/ajaxInit.gstring"/>
+		</replaceregexp>
+	</target>
+
+	<property name="ajaxclient.jsinitPath" value="xcProject/jsinit.js" />
+	<property name="jsinit.from" value="${ajaxclient.source}/${ajaxclient.jsinitPath}" />
+	<property name="jsinit.to" value="${ajaxclient.release}/${ajaxclient.jsinitPath}" />
+
+	<available file="${jsinit.from}" property="has.jsinit"/>
+	<target name="shrink-jsinit" if="has.jsinit">
+
+		<echo message="compressing ${jsinit.from} to ${jsinit.to}"/>
+		<java jar="${build.ajaxclient.dir}/../../dojotoolkit/util/closureCompiler/compiler.jar" fork="true" failonerror="true">
+			<arg value="--compilation_level"/>
+			<arg value="ADVANCED_OPTIMIZATIONS"/>
+			<arg value="--js"/>
+			<arg value="${jsinit.from}"/>
+			<arg value="--js_output_file"/>
+			<arg value="${jsinit.to}"/>
+		</java>
+
+	</target>
+
+	<!-- ================================= 
+	       target: buildInfo
+	     ================================= -->
+	<target name="buildInfo" description="adding revision number to dojo file">
+
+		<!-- TODO with file is to change?
+		
+		<tstamp>
+    		<format property="TODAY_FORMATTED" pattern="yyyy-MM-dd"/>
+  		</tstamp>
+		
+
+		<echo append="true" file="${basedir}/${build.release.dir}/${ajaxClient.releaseName}/excentos/behaviour.xd.js" message="excentos.uiVersion = '${TODAY_FORMATTED}';"/>
+		
+		<replace file="${basedir}/${build.release.dir}/ajaxclient/theme/theme.css" token="css/http://" value="http://"/>
+		-->
+
+		<!-- temporarily off due to problems with svnkit 1.2
+		<svn username="${username}" password="${password}">
+			<info target="${basedir}/${svn.ajaxClientSources.dir}/excentos" verbose="true"/>
+		</svn>
+		<property name="ui_version" value="${ajaxClient.releaseName}-${ajaxClient.version}-${svn.info.rev}"/>
+		<echo append="true" file="${basedir}/${build.releaseDir}/${ajaxClient.releaseName}/excentos/behaviour.js" message="excentos.uiVersion = '${ui_version}';"/>
+		<echo append="true" file="${basedir}/${build.releaseDir}/${ajaxClient.releaseName}/excentos/behaviour.xd.js" message="excentos.uiVersion = '${ui_version}';"/>
+		-->
+
+
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
+	          path to svn libraries for checkout target  
+         - - - - - - - - - - - - - - - - - -->
+	<!-- needed if svn tasks are used 
+	<path id="svnant.classpath">
+		<pathelement location="${svnant.dir}/svnant.jar" />
+		<pathelement location="${svnant.dir}/svnClientAdapter.jar" />
+		<pathelement location="${svnant.dir}/svnjavahl.jar" />
+		<pathelement location="${svnant.dir}/svnkit.jar" />
+	</path>
+
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+	 -->
+
+</project>

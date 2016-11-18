@@ -1,0 +1,189 @@
+//**** Common helpers ****//
+
+.clearfix() {		// Force wrapper to contain floated elements
+	zoom:1;			// For IE 6/7 (trigger hasLayout)
+	&:before,
+ 	&:after {
+		content: "";
+		display: block;
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+.hideText() {
+	font-size: 0;
+	line-height: 0;
+	text-indent: -10000px;
+}		
+
+.isClickable() {
+	cursor: pointer;
+}
+
+.unselectable() {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}	
+
+.background-clip(@box) {
+	-moz-background-clip: @box;
+	-webkit-background-clip: @box;
+	background-clip: @box;
+}
+
+
+//*****   Fonts   *****//
+.font(@font-size) {
+	.split-font(@font-size);
+	font-size: @size;
+	line-height: @line-height;
+}
+
+.font(@font-size, @min-height) {
+	.split-font(@font-size);
+	@padding: ((@min-height - @line-height)/2);
+
+	font-size: @size;
+	line-height: @line-height;
+	padding-top: floor(@padding);
+	padding-bottom: ceil(@padding);
+}
+
+.split-font(@all) {
+	@size: extract(@all, 1);
+	@line-height: round((@size * 1.2));
+}
+.split-font(@all) when (isnumber(extract(@all, 2))) {
+	@size: extract(@all, 1);
+	@line-height: round((@size * extract(@all, 2)));
+}
+.split-font(@all) when (isem(extract(@all, 2))) {
+	@size: extract(@all, 1);
+	@line-height: round((@size * unit(extract(@all, 2))));
+}
+.split-font(@all) when (ispixel(extract(@all, 2))) {
+	@size: extract(@all, 1);
+	@line-height: extract(@all, 2);
+}
+
+
+//bootstrap fix-mes
+.vertical(@start-color; @end-color; @mulitBG) {
+	background: @mulitBG, -webkit-gradient(linear, left top, left bottom, color-stop(0%,@start-color), color-stop(100%,@end-color)); /* Chrome,Safari4+ */
+	background: @mulitBG, -webkit-linear-gradient(top, @start-color 0%, @end-color 100%);  // Safari 5.1-6, Chrome 10+
+	background: @mulitBG, -o-linear-gradient(top, @start-color 0%, @end-color 100%);  // Opera 12
+	background: @mulitBG, linear-gradient(to bottom, @start-color 0%, @end-color 100%); // Standard, IE10, Firefox 16+, Opera 12.10+, Safari 7+, Chrome 26+
+ }
+
+.vertical(@start-color; @end-color) {
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@start-color), color-stop(100%,@end-color)); /* Chrome,Safari4+ */
+	background-image: -webkit-linear-gradient(top, @start-color 0%, @end-color 100%);  // Safari 5.1-6, Chrome 10+
+	background-image: -o-linear-gradient(top, @start-color 0%, @end-color 100%);  // Opera 12
+	background-image: linear-gradient(to bottom, @start-color 0%, @end-color 100%); // Standard, IE10, Firefox 16+, Opera 12.10+, Safari 7+, Chrome 26+
+}
+
+
+
+
+
+#buildSprite(@clickPadding) {
+	.sprites();
+	.split-padding(@clickPadding);
+	.split-position(@background-position);
+
+  	.background-clip(content-box) !important;
+  	.box-sizing(content-box) !important;
+	width: @width;
+	height: @height;
+	padding: @clickPadding; 
+	@sprite: @background (@left + @padding-left) (@top + @padding-top) no-repeat;
+}
+#buildSprite() {
+	.sprites();
+	.split-position(@background-position);
+
+  	.background-clip(content-box) !important;
+  	.box-sizing(content-box) !important;
+	width: @width;
+	height: @height;
+	@sprite: @background @left @top no-repeat;
+}
+
+
+//*****  Explode shorthand size ****//
+.split-size(@all) when (isnumber(extract(@all, 1))) {
+	@width: extract(@all, 1);
+	@height: extract(@all, 1);
+}
+.split-size(@all) when (isnumber(extract(@all, 2))) {
+	@width: extract(@all, 1);
+	@height: extract(@all, 2);
+}
+
+//*****  Explode shorthand position ****//
+.split-position(@all) when (isnumber(extract(@all, 1))) {
+	@left: extract(@all, 1);
+	@top: extract(@all, 1);
+}
+.split-position(@all) when (isnumber(extract(@all, 2))) {
+	@left: extract(@all, 1);
+	@top: extract(@all, 2);
+}
+
+//*****  Explode shorthand margin ****//
+.split-margin(@all) when (isnumber(extract(@all, 1))) {
+	@margin-top: extract(@all, 1);
+	@margin-right: extract(@all, 1);
+	@margin-bottom: extract(@all, 1);
+	@margin-left: extract(@all, 1);
+}
+.split-margin(@all) when (isnumber(extract(@all, 2))) {
+	@margin-top: extract(@all, 1);
+	@margin-right: extract(@all, 2);
+	@margin-bottom: extract(@all, 3);
+	@margin-left: extract(@all, 2);
+}
+.split-margin(@all) when (isnumber(extract(@all, 3))) {
+	@margin-top: extract(@all, 1);
+	@margin-right: extract(@all, 2);
+	@margin-bottom: extract(@all, 3);
+	@margin-left: extract(@all, 2);
+}
+.split-margin(@all) when (isnumber(extract(@all, 4))) {
+	@margin-top: extract(@all, 1);
+	@margin-right: extract(@all, 2);
+	@margin-bottom: extract(@all, 3);
+	@margin-left: extract(@all, 4);
+}
+
+//*****  Explode shorthand padding ****//
+.split-padding(@all) when (isnumber(extract(@all, 1))) {
+	@padding-top: extract(@all, 1);
+	@padding-right: extract(@all, 1);
+	@padding-bottom: extract(@all, 1);
+	@padding-left: extract(@all, 1);
+}
+.split-padding(@all) when (isnumber(extract(@all, 2))) {
+	@padding-top: extract(@all, 1);
+	@padding-right: extract(@all, 2);
+	@padding-bottom: extract(@all, 1);
+	@padding-left: extract(@all, 2);
+}
+.split-padding(@all) when (isnumber(extract(@all, 3))) {
+	@padding-top: extract(@all, 1);
+	@padding-right: extract(@all, 2);
+	@padding-bottom: extract(@all, 3);
+	@padding-left: extract(@all, 2);
+}
+.split-padding(@all) when (isnumber(extract(@all, 4))) {
+	@padding-top: extract(@all, 1);
+	@padding-right: extract(@all, 2);
+	@padding-bottom: extract(@all, 3);
+	@padding-left: extract(@all, 4);
+}

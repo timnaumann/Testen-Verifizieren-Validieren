@@ -1,0 +1,18 @@
+//********** Phase / Stage / Topic Navigation ***********//
+.xc_topic_navigation,
+.xc_phase_navigation {
+	.xc_collapser_node {
+		.isClickable();
+		#phasenavi_trigger();		
+	}
+	.xc_topic_button {
+		.isClickable();
+		#phasenavi_button();
+		&.xc_wasinview {
+			#phasenavi_button_visited();
+		}
+		&.xc_inview {
+			#phasenavi_button_active();
+		}
+	}
+}

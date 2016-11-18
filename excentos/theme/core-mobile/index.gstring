@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<%
+offline = parameters.containsKey("offline"); 
+ajaxInitVariant = parameters.containsKey("localbuild") ? "localbuild" : suffix; 
+%>
+<head>
+	<title>core-mobile theme development page</title>
+	<!-- mobile theme is made for environments which set the following viewport behaviors: (everything else would rather be a responsive theme) -->
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<style>
+	    /* some very basic resetting */
+		body {
+		  font-family: sans-serif;
+		  margin: 0;
+		  border: 0;
+		  padding: 0;
+		}
+		#xc_application{
+		/* some very basic mobile site pattern emulation (avoid desktop environments taking full width)
+		   TODO breite sollte eigentlich via media query laufen
+		 */
+		  max-width: 480px; 
+		  margin-left:auto;
+		  margin-right:auto;
+		}
+		
+	
+	</style> 
+</head>
+<body>
+		<!-- begin excentos js loader -->
+		<script type="text/javascript">
+			;(function(){
+				var s = location.href.match(/xcSessId=[^&;? ]+/) || document.cookie.match(/xcSessId=[^&;? ]+/);
+				var q = (s && s.length > 0) ? ';jsessionid=' + encodeURIComponent(s[0].split('=')[1]) : '';
+				var r = '?preventCache=' + new Date().getTime();
+				var p = '&referer=' + encodeURIComponent(location.href) + '&' + document.cookie.match(/xutma=[^&;? ]+/);
+				document.write('<' + 'script type="text/javascript"' + ' src="service.jsinit' + q + r + p + '&xcAjaxInitVariant=${ajaxInitVariant}&xcTheme=${theme}" charset="UTF-8" id="xcJsInit"><' + '/script>');
+			})();
+		</script>
+		<!-- end excentos js loader -->
+		
+		<!-- begin excentos content area -->
+		<div id="xc_application">
+			<div id="xc_application_pane"></div>
+			<div id="xc_loader"></div>
+			<div id="xc_meta_decription" style="display:none">
+				Der Produktberater führt Sie in einem interaktivem Beratungsablauf zu Ihrem perfekt passendem Produkt aus dem Sortiment von SportScheck.
+			</div>
+		</div>
+		<div id="xc_fallback">
+			Entschuldigung... leider startet der Berater nicht. Das könnte daran liegen, dass JavaScript deaktiviert ist. Möglicherweise ist aber auch ein Fehler am Server aufgetreten, wir werden das Problem so schnell wie möglich lösen.
+		</div>
+		<!-- end excentos content area -->
+</body>
+</html>

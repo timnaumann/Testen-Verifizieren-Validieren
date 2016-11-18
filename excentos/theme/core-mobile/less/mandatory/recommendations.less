@@ -1,0 +1,66 @@
+// CONTAINS:
+
+//********** Recommendations ***********//
+.xc_recommendations {
+	#wrapper_recommendations();
+	.xc_recommendations_main_heading,
+	.xc_recommendation_heading {
+		#header_recommendations();
+	}
+}
+.xc_recommendation {
+	#wrapper_recommendation();
+	.xc_product {
+		.xc_product_image_wrapper {
+			.isClickable();
+			position: relative;
+			#recommendation_productimage();
+			.xc_product_image:after {
+				content: "";
+		    	#zoom_open();
+			}
+		}
+		.xc_product_details_wrapper {
+			overflow: hidden;
+			display: block;
+			text-decoration: none;
+		}
+		.xc_product_label {
+			#recommendation_label();
+		}
+		.xc_product_sidebox {
+		}
+		.xc_product_link {
+			#recommendation_productlink();
+		}
+		.xc_product_price {
+			#recommendation_price();
+		}
+	}
+
+	.xc_reasons {
+	}
+	.xc_reason_group {
+		position: relative;
+		clear: both;
+	}
+	.xc_reason {
+		position: relative;
+		#recommendation_reason();
+	}
+	.xc_pro {
+		#recommendation_reason_pro();
+	}
+	.xc_con {
+		#recommendation_reason_con();
+	}
+	.xc_neutral {
+		#recommendation_reason_neutral();
+	}
+	.xc_nearly {
+		#recommendation_reason_nearly();
+	}
+	.xc_unknown {
+		#recommendation_reason_unknown();
+	}
+}

@@ -1,0 +1,80 @@
+//*****   SPACING   *****//
+@spacing_xx-small: 1px;
+@spacing_x-small: 2px;
+@spacing_small: 5px;
+@spacing_medium: 10px;
+@spacing_large: 15px;
+@spacing_x-large: 20px;
+@spacing_xx-large: 30px;
+
+
+//*****   TYPOGRAPHY   *****//
+// Based upon the standard 7 CSS size settings(xx-small - xx-large)
+// call using imported Mixin..
+// normal text flow:
+// e.g. .font(@font_small);
+// vertical centering with line-height support:
+// e.g. .font(@font_medium, 50px); 
+//
+// Fonts use a default line-height of 1.2 (FF "normal" line-height for input compatibilty)
+// This can be customized by adding a second attribute to the variable.
+// e.g. @font_xx-large: 20px, 30px
+// - or -
+// e.g. @font_xx-large: 20px, 1.6; 
+// - or -
+// e.g. @font_xx-large: 20px, 1.4em; 
+@font_xx-small: 10px;
+@font_x-small: 12px;
+@font_small: 13px;
+@font_medium: 14px;
+@font_large: 16px;
+@font_x-large: 18px;
+@font_xx-large: 20px;
+
+@font_family_base: "Arial Narrow", Arial, sans-serif;
+@font_family_header: Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+
+//*****   COLORS:   *****//      (TODO real color codes)
+//  !!! Please read THIS !!
+//  http://lesscss.org/functions/#color-definition
+//  http://lesscss.org/functions/#color-operations
+ 
+@white: rgb(100%,100%,100%);
+@black: rgb(0,0,0);
+
+@canvas: @white;
+@background-light: #ECF0F1; // TODO 1. in %  2. XC-Farbe (das ist noch SportScheck)
+@background-medium: #505959; // TODO 1. in %  2. XC-Farbe (das ist noch SportScheck)
+@background-dark: #22313F; // TODO 1. in %  2. XC-Farbe (das ist noch SportScheck)
+@background-darker: #2F3536;
+
+@background-hue-dark: #2C3E50; // TODO in % ausdrücken
+@background-hue-medium: #BDC3C5; // TODO in % ausdrücken
+
+@font-on-light: #2E3435; // TODO 1. in %  2. XC-Farbe (das ist noch SportScheck)
+@font-on-light-highlight: #505959;
+@font-on-dark: #ECF0F1; // TODO 1. in %  2. XC-Farbe (das ist noch SportScheck)
+@font-on-dark-highlight: #BDC3C6;
+
+@highlight: #E67E22; // TODO 1. in %  2. XC-Farbe (das ist noch SportScheck)
+@highlight-lighter: lighten(@highlight, 20%); // TODO custom oder formel anpassen
+@highlight-darker: darken(@highlight, 20%); // TODO dito
+
+//*****   IMAGES   *****//
+@image-sprite-url: "../img/sprites.png";
+@image-loader-url: "../img/loader.gif";
+
+//*****   TRANSITIONS   *****//
+@transition-loader-duration: .5s;
+
+//*****   Slider   *****//
+// slider needs some special calculations for positioning so we build it via variables
+@slider_track_height: 10px;
+@slider_track_topclick: 67px;		// clickable area;
+@slider_track_bottomclick: 43px;		// clickable area;
+@slider_track_padding: 10px;		// left & right padding;
+@slider_handle_height: 35px;
+@slider_handle_width: 35px;
+@slider_popup_width: 100px;
+@slider_popup_connector_width: 8px;

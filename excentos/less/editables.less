@@ -1,0 +1,49 @@
+.xc_enrichment {
+  position: relative;
+}
+
+.xc_widget_editable_EditAction {
+  width: 30px;
+  height: 31px;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAABQCAMAAAA5vDWMAAAA1VBMVEUAAADxLkvuK0jvLEn0MU71Mk/mI0D////3NFHoJULpJkPsKUbrKEXyL0yqAArnJEH2M1DwLUrtKkfzME3qJ0TjIj67Chj2Plnsx8n+9fbwxcnyR2HMW2K4Ex/83OD64uW/JzP/+/vy2Nn78PH1b4LtwsXQFizx0tTyNVHTHDL719uvDxj6gJL3rLfQJznkZXTzUmrXfoTwM0/qvcD0dYfoPlXyXHLtM067ICzRaXH6v8etAg33laT5ztTln6XsKkf1Y3nqtbrbHTe9NT3DRk7dK0LqWW0uEh2kAAAAAXRSTlMAQObYZgAAAeNJREFUSMft1Ml2okAAheECOt5WbG2NpTIIEsSoibMx0XSGHt7/mboGwJLBVVY5+Rda8J1D7S5h3fe+F9S7JyKGxfWE/iyN+e7qQjsyucQT8q2g3io5FbHjWaOEr/PNgPBdHsmPbKuRawHWSjzk2PGC5T8LNw+StfMcDwiWbjSsi0eSUR/g3q1pkltqjseVfTl5QQwlZyZ1SI04oqoXa9NIWU+T9+L2qaKnkZN6UodNXeF2XHpvpa1ETNljci811Uisj2t5L1eV66Kdtzjwe2n9PMmmjZfFmmuWO7xVAPiLLu1kIzXeHMH20GnWckkOXv8OxkzzTKusRvdPpVoQJdPqhabEpc3SqEvIgFZKogNCmI9pIY6Z8ty7RkF3LvmqpI/fNWGluya5dNckl+7aleDyXVP5mmdBzRIpu4aw34+ivlIIATFvu5m2UHYNtvZ+PI60UzaUXUOkHYHZJs8tHrYtG7jZ8LM24X82lF2DbRx8f/3Gjpt54O8Nw4aAlKeDpzE/zgGEeyOCsmuwdb1T5adfAHfnNwScWJcqm/lQdg02/9X19ivSlF2DbZpvI98bLdZBwgJijsyHOVgvy9tzrvMQ7T3I/IQFxBxayKbsGgpSdi3Ma6js2nMj13O6a7KvXfsU/QfW0VuHZIBmpQAAAABJRU5ErkJggg==') no-repeat;
+  position: absolute;
+  top: 0;
+  margin: 5px;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.xc_widget_editable_EditAction.xc_edit_type_contentText {
+  background-position: 0 0;
+}
+
+.xc_widget_editable_EditAction.xc_edit_type_contentImage {
+  background-position: 0 -40px;
+}
+
+/*CSS3 Transition*/
+.xc_widget_editable_EditAction {
+  transition: right 0.2s ease-out;
+  transition-property: opacity, width, right;
+  opacity: 0;
+  width: 0px;
+  right: -10px;
+}
+
+/*show editimage next to the edittext button*/
+.xc_show_editactions_contentImage .xc_widget_editable_EditAction.xc_edit_type_contentImage,
+.xc_show_editactions_contentText .xc_widget_editable_EditAction.xc_edit_type_contentText,
+.xc_show_editactions_all .xc_widget_editable_EditAction {
+  width: 31px;
+  right: 0px;
+  opacity: 1;
+}
+
+.xc_show_editactions_contentText .xc_widget_editable_EditAction.xc_edit_type_contentImage,
+.xc_show_editactions_all .xc_widget_editable_EditAction.xc_edit_type_contentImage {
+  right: 35px !important;
+}
+
+
+
+

@@ -1,0 +1,365 @@
+/*
+ * all rights reserved, excentos GmbH
+ */ 
+
+<%
+
+// major TODO: transparent machen, was eine Variable "von außen" ist und sicherstellen dass diese 
+// nie neu zugewiesen oder sonstwie geändert oder überschrieben werden
+// konkret: wenn projekte auf profiler 1.6.30  sind, alle inputs nur noch aus der "templateData" Map (neu) lesen. 
+
+// Get the initial API call results.
+// The GET und POST parameters can be configured via 
+// a) config key (application.clients.xcAjaxClient.ajaxInit.GET.return) with list of API objects
+// b) question Flow rule ("returnRecommendations" predicate) 
+// c) custom modifications in this script.
+// recommended default is to use the QF rule for the recommendations and the config key for the rest.
+
+// If server is not okay, do nothing on the API. This script runs into the serverError handling anyways.
+def initialPayloadJson = null;
+
+// Copy to local variables to prevent permanent changes to the variable bindings.
+def serverStatusLocal = serverStatus;
+def errorCodeLocal = errorCode;
+def errorLabelLocal = errorLabel;
+def errorMessageLocal = errorMessage;
+def errorLabelLocalJsString = "";
+
+if(serverStatusLocal == 0){
+	try{
+		def dto = recommendationService.getData(GET, POST);
+		initialPayloadJson = jsonMarschaller.marshal(dto);
+	}catch(Throwable e){
+		e.printStackTrace(); //prints to to standard error console, because there is no logger available within gstring
+		serverStatusLocal = 500;
+		errorCodeLocal = 500;
+		
+		// TODO Errormessages müssen aus config / i18n kommen. 		
+		errorLabelLocal = e.toString();  
+		errorLabelLocalJsString = errorLabelLocal.replace("\n"," ").replace("\r"," ");
+		errorMessageLocal = "Sorry, but the advisor seems to have an internal problem. We're sorry for the inconvenience and will try to fix the problem soon.";
+	}
+} 
+hasClientUrl = !parameters.xcClientUrl.isEmpty();
+// "projectRevision" context variable was introduced in xcProfiler 1.6.29; 
+// until all projects are on 1.6.29+, the parameter is passed through the "parameters" object to
+// be able to check for existence. Afterwards, TODO switch to 'cacheBust = projectRevision ?: "";' 
+// and then remove the backCompat hack from AjaxInitServlet.java
+cacheBust = parameters.containsKey('projectRevisionBackCompat') ? parameters.projectRevisionBackCompat : ""; 
+// unfortunately the project template contained SET_FROM_ANT as default value for quite a while (now empty string)
+cacheBust = cacheBust == "SET_FROM_ANT" || hasClientUrl ? "" : cacheBust;
+cacheBustParam = cacheBust ? "?cacheBust=${cacheBust}" : ""
+
+// Copy to local variable to prevent permanent changes to the variable binding of "serviceBaseUrl" 
+def sbu = serviceBaseUrl
+
+// URL parameter "xcScheme" and "xcServiceBaseUrl" for doing unconventional integrations:
+// (standard pattern is that the scheme is not specified, value begins with '//' and the https/http switch is done automatically)
+// the xcScheme parameter is necessary if the application is started from a local file or anything that's not http or https
+if(parameters.containsKey("xcServiceBaseUrl")){
+	sbu = parameters.xcServiceBaseUrl
+}
+if(parameters.containsKey("xcScheme") && sbu.startsWith("//")){
+	sbu = parameters.xcScheme + ":" + sbu
+}
+
+// BEGIN JS GENERATION
+%>
+
+;(function(win){ 
+	/*mini-framework*/
+	var d=win.document,__uniqCount=0;
+	//https://github.com/dperini/ContentLoaded
+	var contentLoaded = function(c,h){var b=false,g=true,j=c.document,i=j.documentElement,m=j.addEventListener?"addEventListener":"attachEvent",k=j.addEventListener?"removeEventListener":"detachEvent",a=j.addEventListener?"":"on",l=function(n){if(n.type=="readystatechange"&&j.readyState!="complete"){return}(n.type=="load"?c:j)[k](a+n.type,l,false);if(!b&&(b=true)){h.call(c,n.type||n)}},f=function(){try{i.doScroll("left")}catch(n){setTimeout(f,50);return}l("poll")};if(j.readyState=="complete"){h.call(c,"lazy")}else{if(j.createEventObject&&i.doScroll){try{g=!c.frameElement}catch(d){}if(g){f()}}j[m](a+"DOMContentLoaded",l,false);j[m](a+"readystatechange",l,false);c[m](a+"load",l,false)}};
+	var createNode=function(/*Object*/params){
+		var type=params.type, id=params.id, src=params.src, content=params.content, placeAt = getNode(params.placeAt);
+		var map={type:{link:"text/css",script:"text/javascript",style:"text/css"},
+				  src:{link:"href",script:"src",style:"name"}};
+		var node = document.createElement(type);
+		if(map.type[type]){ //if "link","script" or "style"
+			node.type = map.type[type];
+			src && (node[map.src[type]] = src);
+			node.charset = "utf-8";
+			type=="link" && (node.rel = "stylesheet");
+			placeAt = placeAt || document.getElementsByTagName("head")[0];
+		}
+		node.id = params.id||"xcInit"+(++__uniqCount);
+		placeAt && getNode(placeAt).appendChild(node);
+		
+		if(content){
+			try {node.innerHTML = content}
+			catch(e){
+				//IE treats
+				type=="link" && (node.styleSheet.cssText = content);
+				type=="script" && (node.text = content);
+			}
+		}
+		return node;
+	}
+	var getNode = function(/*String|DOM*/ id){
+		var node = (id&&id.nodeType&&id)||d.getElementById(id);
+		return node;
+	}
+	var addCssRule = function(/*String*/ cssRule){
+		var style = getNode("xc_stylenode") || createNode({id:"xc_stylenode",type:"style"});
+		var content = "\\r\\n"+cssRule;
+		try {style.innerHTML += content}
+		catch(e){
+			try {
+				style.styleSheet.cssText += content
+			}catch(e){
+				//http://blogs.telerik.com/aspnetmvcteam/posts/10-05-03/internet-explorer-css-limits.aspx
+				console.log("ajaxinit::addCssRule() could not append css rule - maybe there are too many stylesheets already ("+document.styleSheets.length+")");
+			}						
+		}
+	}
+	var addClass = function(/*String|Dom*/ id, /*String*/ addClasses){
+		addClasses = addClasses.split(" ");
+		var n = getNode(id), knownClasses = n.className||"", newClasses=knownClasses;
+		if(!n)return;
+		for(var i=0, l=addClasses.length,c; i<l; ++i){
+			c = addClasses[i];
+			knownClasses.indexOf(c)==-1 && (newClasses+=" "+c);
+		}
+		n.className = newClasses;
+	}
+	var hideNode = function(/*String|Dom*/ id){
+		var n = getNode(id);
+		n && (n.className+=" xc_inital_hide");
+	}
+	/*mini-framework*/
+	addCssRule("#xc_meta_description, .xc_inital_hide {display:none;}");
+	
+	xcInitial = {};	 
+
+<% if(serverStatusLocal > 0){ /* Server is not okay. */ %>
+	xcInitial.errorCode = "${errorCodeLocal}";
+	xcInitial.errorLabel = "${errorLabelLocalJsString}";
+	xcInitial.errorMessage = "${errorMessageLocal}";
+	
+	addCssRule("#xc_application {display:none;}");
+	contentLoaded(win, function(){
+		
+		var fallbacknode = getNode("xc_fallback");
+		var errnode = getNode("xc_errormessage") || createNode({id:"xc_errormessage",type:"div",placeAt:fallbacknode});
+
+		if(!fallbacknode){
+			//if there is no xc_fallback node, place the error message before the application
+			var appnode = getNode("xc_application");
+			appnode && appnode.parentNode.insertBefore(errnode, appnode);
+		}
+
+		errnode.innerHTML = "<h3>${errorLabelLocalJsString}</h3><p>${errorLabelLocal} ${errorCodeLocal}</p>";
+	});
+	
+<% }else{ /* Server is okay. */ %> 
+	
+	<% if(!userAgent.valid) { 
+		def uaErrorMessage 	= userAgent.message.replaceAll('"', '\\\\"');
+		def uaName			= userAgent.name.replaceAll('"', '\\\\"');
+	%>
+		xcInitial.invalidUserAgent = {
+	 		name: "${uaName}",
+	   		message: "${uaErrorMessage}"
+		};
+	<% } %>
+	//in case of a page reload/revisit we need to be able to hide the welcome screen
+	xcInitial.showWelcome = location.href.indexOf("xcStartAt=")==-1;
+	
+	addCssRule("#xc_fallback  {display:none;}");
+	if(!xcInitial.showWelcome){
+		addCssRule("#xc_welcome  {display:none;}");
+	}
+
+	//TODO: in the future allow configuration on integration like xcStartAdvisor = true|false|"onready"|"onload"
+	if(typeof xcStartAdvisor == "undefined"){
+		xcStartAdvisor = true;
+	}
+
+	contentLoaded(win, function(){
+		hideNode("xc_errormessage"); //add .xc_initial_hide in case of css transition
+		
+		if(!xcStartAdvisor){
+			var starterNode = xcInitial.starterNode = getNode("xc_starter");
+			if(starterNode && xcInitial.showWelcome){
+				//in case `xc_starter` link was provided apply a click handler which launches the advisor
+				var onclick = starterNode.onclick;
+				starterNode.onclick = function(e){onclick && onclick.apply(this,arguments); xcStartAdvisor = true};
+			}else {
+				//if the launch was deferred, launch it now implicitely
+				xcStartAdvisor = true;
+			}
+		}
+	});
+	
+	
+	
+	//debugtools
+	(function(){
+		if(/xcFirebug/.test(location.href)){
+		
+			//queue for console.* calls
+			var CommandQueue = (function(){
+				var queue = [], qconsole = {}, commands = ["log","info","warn","debug","error","dir","group","groupEnd"];
+				return {
+					init: function(){
+						var onerror = window.onerror; window.onerror=function(){onerror && onerror.apply(null,arguments);console.error.apply(console,arguments);}
+						var wrapConsole = function(cmd){qconsole[cmd]=console[cmd]; console[cmd] = function(){CommandQueue.add(cmd,arguments);};};
+						for(var i=0,l=commands.length;i<l;++i){wrapConsole(commands[i]);}
+						!function(){var FB; 
+							if(FB = window.Firebug){ //minimize Firebug-Lite and release the queue;
+								!function(){FB.chrome && FB.chrome.isInitialized ? (FB.chrome.close(), CommandQueue.release()) : setTimeout(arguments.callee,50);}();
+							}else setTimeout(arguments.callee,500);
+						}();
+					},
+					add: function(cmd, args){queue.push({cmd:cmd,args:args});},
+					release: function(){
+						for(var i=0, l=queue.length, q; i<l; ++i){console[queue[i].cmd].apply(console, queue[i].args);}
+						queue = [];
+					}
+				};
+			})();
+		
+			CommandQueue.init();
+			
+			//options cant be used ... too buggy - causing javascript errors here and there.
+			window.localStorage && localStorage.removeItem("FirebugLite");
+			document.write('<'+'script type="text/javascript" src="https://getfirebug.com/firebug-lite.js#startOpened=true"><'+'/script>');
+		}
+	})();
+	
+	<%/* create the basic dojotoolkit configuration data    
+	   about "locale": dojotoolkit wants the RFC de-de notation, not the java de_CH notation. 
+	   				in addition, dojo only differentiates "per country" in English, the rest is just "de".
+	   				in addition, dojo doesn't know of locale variants, especially not self-defined ones like "de_XX_christmas. 
+	   				[notably, "pt-pt" and "zh-tw" are explicitly supported by dojo, too but currently don't play a role] 
+	*/
+	localeString = locale.toString().toLowerCase();
+	langRegLocale = localeString.size() < 5 ? localeString : localeString[0..4]; // omit variants and/or extensions
+	if(langRegLocale.find(/en/) == "en" && langRegLocale.find(/XX/) != "XX"){
+		dojoLocaleString = langRegLocale.replaceAll(/_/, "-"); // english has country specifics in dojo
+	}else{
+		dojoLocaleString = langRegLocale[0..1]; // other languages just take the first two characters.
+	}
+	
+	isDebug = xcDebug.isEmpty() ? false : xcDebug=="true";
+	isDebugString = isDebug ? "true" : "false";
+	
+	isBuild = true;
+	if(environment == "local" && xcAjaxInitVariant != "localbuild"){
+		isBuild = false;
+	}
+    %>
+	<%
+	// force cross-domain loading in "xdomain"  or "dev" variants. "app" variant is the regular case
+	if(xcAjaxInitVariant == "xdomain" || xcAjaxInitVariant == "dev"){
+	    // do NOT directly manipulate serviceBaseUrl variable (changes are permanent)
+		sbu = sbu.replaceAll(/excentos\.com/, "excentos.biz");
+	}
+
+	// Im Folgenden (xcInitial config wie baseUrl) wurde umentschieden, dass das nicht in die API kann, 
+	// weil es nicht logisch eindeutig lösbar ist.
+	// da das Problem, das wir lösen, ein Bootstrap-Problem vom ajaxclient ist, kommt es in die xcInitial.
+	// Der Wert wird dann in der init in excentos.shared.masterApplicationName geschrieben.
+	%>
+	xcInitial.masterApplicationName = "${masterApplicationName}";
+	xcInitial.serviceBaseUrl = "${sbu}";
+	xcInitial.appBaseUrl = "${sbu}${masterApplicationName}";
+	xcInitial.serviceSmd = ${serviceSmd};
+	xcInitial.debug = ${isDebugString};
+	
+	<% 
+	// depending on used profiler version the variable may not be defined
+	try {xcInternalSessId;} catch(e){xcInternalSessId = 0;} 
+	%>
+	xcInitial.internalSessionId = ${xcInternalSessId};
+	xcInitial.theme = "${theme}";
+	
+	<%
+
+	// default is the absolute xdomain variant (the production way)
+	if(theme){
+		themeLowercase = theme.toLowerCase();
+		// If the "theme" config is set, we assume a multi-theme project.
+		themeModuleName = "xcProject/theme/${themeLowercase}";
+		themePathElement = themeLowercase + "/";
+	}else{
+		themePathElement = "";
+	}
+	appModuleName = "xcProject/${applicationName}";
+	
+	baseUrl = "${sbu}ajaxclient/";
+
+	if(environment == "local" && xcAjaxInitVariant == "localbuild"){
+		// you have to temporarily change the build target path in the ajaxclient build profile to be able to
+		// use .localbuild (live build target is outside WebContent)
+		baseUrl = "${sbu}ajaxclientBuild/";
+	}	
+	
+	if(!parameters.xcClientUrl.isEmpty()){
+		baseUrl = parameters.xcClientUrl;
+	}
+		
+	if((xcAjaxInitVariant != "designerview") && (xcAjaxInitVariant != "app")){ 
+		// designerview defines own stylesheet in the page, so the stylesheet is NOT written in that case
+		// app mode is userd when the CSS tag is in the embedding page itself (e.g. to switch betwenn LESS and CSS modes).
+		
+		// add the theme CSS link node to the document head (before the JS because CSS is loaded async)
+		// you can't add a CSS link node via simple document.write(), so we do the explicit technique:
+		// note: theme CSS link is the same in live build and dev environment, so it's not inside the if/then branch
+	%>
+	createNode({type:"link", src:"${baseUrl}xcProject/theme/${themePathElement}css/theme.css${cacheBustParam}"});
+	<% }
+	
+	%>
+	xcInitial.development = {
+		serviceBaseUrl: "${sbu}",
+		workspaceProject: "${workspaceProject}",
+		environment: "${environment}",
+		ajaxInitVariant: "${xcAjaxInitVariant}"
+	};
+	<%
+	if(!parameters.xcShowDevelopmentDashboard.isEmpty()){%>
+		xcInitial.development.showDevelopmentDashboard = true;
+	<% }
+	
+	if(!parameters.xcLog.isEmpty()){
+	%>
+		xcInitial.development.log = "${parameters.xcLog}".split(",");
+	<% } %>
+
+	// Load dojo.js and dependencies.
+	dojoConfig = {
+		locale: "${dojoLocaleString}",
+		async: true,
+		selectorEngine: "css3",
+		parseOnLoad: false,
+		paths: {
+			"dijit": "../dijit",
+			"dojox": "../dojox",
+			"excentos": "../../excentos",
+			"xcProject": "../../../xcProject"
+		},
+		isDebug: ${isDebug},
+		cacheBust : "${cacheBust}",
+		callback: function(){
+			require(["xcProject/init"],	function(init){init();} );
+		}
+	};
+	<% if(theme){ %>
+	dojoConfig.deps = ["${themeModuleName}/theme", "${appModuleName}"];
+	<% }else{ %>
+	dojoConfig.deps = ["${appModuleName}"];
+	<% } %>
+	document.write('<' + 'script type="text/javascript" src="${baseUrl}core/dojotoolkit/dojo/dojo<% if(isDebug && isBuild){ %>.js.uncompressed<% } %>.js${cacheBustParam}" charset="UTF-8" async><' + '/script>');
+	<%
+} /* end if serverstatus */
+%>
+})(this); <% /* end toplevel anonymous function */ %>
+
+<% if(!(serverStatusLocal > 0)){ /* Server is okay. 
+  the big chunk of data (api payload) comes at the end (for jsinit readability)
+ (putting it outside the function gives the Browser more chances to optimize internally, but that's just guesswork) 
+*/ %>
+xcInitial.payload = ${initialPayloadJson};
+<% } /* end if serverstatus */ %>

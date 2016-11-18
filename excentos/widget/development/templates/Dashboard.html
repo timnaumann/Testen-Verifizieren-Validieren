@@ -1,0 +1,74 @@
+<div class="claro">
+	<div id="xc_development_dashboard_inner" data-dojo-attach-point="contentNode">
+		<div data-dojo-attach-point="titleBarNode" id="xc_development_dashboard_main_heading">xcAjaxClient Development Dashboard</div>
+		<div data-dojo-attach-point="tabContainer" data-dojo-type="dijit.layout.TabContainer" persist="true" useMenu="false">
+			<div data-dojo-type="dijit.layout.ContentPane" title="System Info">
+				<table>
+					<tr><th>Eclipse Workspace Project</th><td>${devVars.workspaceProject}</td></tr>
+					<tr><th>Environment</ht><td>${devVars.environment}</td></tr>
+					<tr><th>System</th><td>${xcInitial.payload.metaData.system}</td></tr>
+					<tr><th>Project</th><td>${xcInitial.payload.metaData.projectName}</td></tr>
+					<tr><th>Application</th><td>${xcInitial.masterApplicationName}</td></tr>
+					<tr><th>Locale</th><td>${xcInitial.payload.metaData.locale}</td></tr>
+					<tr><th>Ajax Init Variant</th><td>${devVars.ajaxInitVariant}</td></tr>
+				</table>
+			</div>
+			<div data-dojo-type="dijit.layout.ContentPane" title="Config">
+				<div data-dojo-attach-point="configNode">
+					<!-- Config will be inserted here. -->
+				</div>
+			</div>
+			<div data-dojo-type="dijit.layout.ContentPane" title="Misc">
+				<div><a class="xc_link" href="${devVars.serviceBaseUrl}administration/" target="xc_administration_${xcInitial.payload.metaData.system}">open administration backend</a></div>
+				<div class="xc_link" data-dojo-attach-event="onclick:_printStoreToConsole">print store to console</div>
+				<div class="xc_link" onclick="excentos.shared.behavior.showComparisonTable()">show comparison table</div>
+				<div class="xc_link" onclick="dojo.byId('xc_development_dashboard').style.display = 'none';">hide this box</div>
+				<div class="xc_link" onclick="excentos.shared.behavior.onRestart();">reset app</div>
+				<div class="xc_link" data-dojo-attach-event="onclick:_restartWithNewSession">restart client with new session</div>
+				<div class="xc_link" onclick="excentos.shared.controller.callService('reloadServerConfiguration')">reload server configuration</div>
+				<hr>
+				<div class="xc_link" data-dojo-attach-event="onclick:_saveProfileSerialization">save profile</div>
+				<div class="xc_link" data-dojo-attach-event="onclick:_applyProfileSerialization">restore profile</div>
+				<hr>
+				<div class="xc_link" data-dojo-attach-event="onclick:_saveComparison">save comparison</div>
+				<div class="xc_link" data-dojo-attach-event="onclick:_addSavedProductsToComparison">restore comparison</div>
+			</div>
+			<div data-dojo-type="dijit.layout.ContentPane" title="Stages">
+				<div data-dojo-attach-point="stagesNode" class="xc_stages">
+					<!-- Stage nav will be inserted here. -->
+				</div>
+				<div class="xc_link" onclick="excentos.shared.behavior.moveToPreviousStageInPath();">&lt;&lt;&lt; previous stage</div>
+				<div class="xc_link" onclick="excentos.shared.behavior.moveToNextStageInPath();">next stage &gt;&gt;&gt;</div>
+			</div>
+			<div data-dojo-type="dijit.layout.ContentPane" title="Transitions">
+				<fieldset>
+					<div class="xc_link" onclick="(function(n){var t=excentos.transition.TRANSITIONS,d=t[0].disabled;dojo.forEach(t,function(e){e.disable(!d)});n.innerHTML=d?'disable':'enable'})(this)">disable</div>
+					<div class="xc_link" onclick="(function(n){var t=excentos.transition.TRANSITIONS; dojo.forEach(t,function(e){e.isPaused() ? e.start() : e.pause()});})(this)">toggle pause</div>
+				</fieldset>
+				<fieldset>
+					<div class="xc_link" onclick="dojo.byId('xc_tspeed').innerHTML=(excentos.transition.SPEED(excentos.transition.SPEED()/2)).toFixed(2);">half down speed</div>
+					<div class="xc_link" onclick="dojo.byId('xc_tspeed').innerHTML=(excentos.transition.SPEED(excentos.transition.SPEED()*2)).toFixed(2)">double up speed</div>
+					<code class="xc_value"><span id="xc_tspeed">1.00</span>x</code>
+				</fieldset>
+				<fieldset>
+					<input value="RootStageTransition" id="transitionname">					
+						<div class="xc_link" 
+							onclick="(function(d){var t=excentos.transition.TRANSITIONS[document.getElementById('transitionname').value],h=function(e){var t=e.target;f=e.type=='executionBeginBubbled'? 'group':'groupEnd';console[f](t.name)};t.addEventListener('executionBeginBubbled',h);t.addEventListener('executionEndBubbled',h);})(this)"
+						>
+							showEvents
+						</div>
+				</fieldset>
+			</div>
+			<div data-dojo-type="dijit.layout.ContentPane" title="Login">
+				<div data-dojo-attach-point="loggedOutNode">
+					<div class="xc_link" data-dojo-attach-event="onclick:_login">login</div>
+				</div>
+				<div data-dojo-attach-point="loggedInNode">
+					<div>logged-in as <span data-dojo-attach-point="userNameNode"></span></div>
+					<div class="xc_link" data-dojo-attach-event="onclick:_logout">logout</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-dojo-attach-point="resizeHandleNode">RESIZE</div>
+</div>

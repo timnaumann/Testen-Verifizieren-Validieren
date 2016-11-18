@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>tests\tracking\test_linkTracker.html</title>
+	<style>
+		a { display:block; font-size: 16px; margin: 5px; width: 400px; text-overflow: ellipsis; overflow:hidden; white-space: nowrap;}
+		.xc_devinfoview {display: none;}
+
+		.check {
+			padding: 5px; background-color: #fff; border: 2px solid #6d6d6d; display: inline-block; font-family: monospace; font-size: 12px;
+		}
+		.is_passed .check {
+			background-color: lime;
+		}
+
+		#recommendations:after { display: block; content: "... loading"; }
+		.xc_init_done #recommendations:after {display:none;}
+	</style>
+</head>
+
+<body>
+<script>
+	/*global define, require, xcInitial:true, location, console*/
+
+	//IIFE
+	(function loadDojo(onDojoLoadedCallback){
+		dojoConfig = {
+			async: true,
+			selectorEngine: "css3",
+			deps: ["excentos/tests/data/xcInitial"],
+			paths: {
+				"dijit": "../dijit",
+				"dojox": "../dojox",
+				"excentos": "../../excentos",
+				"xcProject": "../../../xcProject"
+			},
+			waitSeconds: 5,
+			callback: function(){
+				require(["dojo/domReady!"], onDojoLoadedCallback);
+			}
+		};
+
+		isLocal = location.hostname === "localhost";
+		isDebug = isLocal || /xcDebug/.test(location.search);
+
+		if(isDebug){
+			dojoConfig.isDebug = true;
+		}
+
+		var src="../../../dojotoolkit/dojo/dojo.js" + (!isLocal ? ".uncompressed.js" : "");
+		document.getElementsByTagName("head")[0].appendChild(document.createElement("script")).src = src;
+	})(function onDojoLoaded(){
+		//IIFE
+		(function clientInitialization(onClientInitialized){
+			var themePath = "xcProject/theme/" + xcInitial.theme;
+			var themeModulePath = themePath.replace(/\//g, ".");
+
+			require([
+				"excentos/Controller",
+				"dojo/_base/declare",
+				"excentos/_Behavior",
+				"excentos/theme/ThemeFactory",
+				"excentos/init"
+			], function localInit(Controller, declare, Behavior, ThemeFactory, init){
+
+				xcInitial.payload.applicationItems[xcInitial.masterApplicationName].config.trackingEnabled = true;
+				xcInitial.payload.applicationItems[xcInitial.masterApplicationName].config.piwikSiteId = 2;
+
+				ThemeFactory.makeTheme(themeModulePath, {});
+
+				declare(themeModulePath + ".Behavior", Behavior, {
+					onInitDone: function(){
+						this.inherited(arguments);
+						Controller.getInstance().clearPingInterval();
+						Controller.getInstance().ping = function(){};
+						onClientInitialized();
+					}
+				});
+
+				init();
+			});
+		})(function runTestOnClientInitialization(){
+			require([
+				"dojo/_base/array",
+				"dojo/aspect",
+				"excentos/theme/registry",
+				"dojo/query",
+				"dijit/registry",
+				"dojo/on",
+				"dojo/dom-class",
+				"dojo/_base/lang",
+				"excentos/tracking/Tracker",
+				"dojo/_base/declare",
+				"excentos/widget/recommendation/Recommendation",
+				"dojo/parser",
+				"excentos/widget/recommendation/Recommendations",
+				"excentos/widget/registry"
+			], function runTests(array, aspect, themeRegistry, query, registry, on, domClass, lang, Tracker, declare, Recommendation, parser, Recommendations, xcWidgetRegistry){
+				//IIFE
+				(function setupLinkTrackerTest(){
+					//debugging purpose
+					debugRecommendationWidgets = {};
+					getEnclosingWidgetAndSetState = function(/*Widget, DomNode, Event*/ element, property, value){
+						element = element.domNode || element.target || element;
+						var widget = registry.getEnclosingWidget(element);
+						widget && widget.set(property, value);
+					};
+
+					var clientTheme = themeRegistry.byName(xcInitial.theme);
+					clientTheme.templateStrings = {
+						"recommendation.Recommendations": 	"<div data-dojo-attach-point='containerNode'></div>",
+						"recommendation.Recommendation": 	"<div>" +
+						"<a href='%{product.detailsPageUrl}'>%{product.label}</a>" +
+						"<span class='check' data-dojo-attach-point='debugstatesNode'></span>" +
+						"</div>"
+					};
+
+					Tracker.track = function markWidgetAsTracked(action /*, ...data*/){
+						var data = Array.prototype.slice.call(arguments, 1);
+						console.info("Tracker::track()",action, data);
+
+						if(action === "goto.product.details"){
+							var productId = data[0];
+							var recommendationWidget = debugRecommendationWidgets[productId];
+							recommendationWidget && getEnclosingWidgetAndSetState(recommendationWidget, "linkTracked", true);
+						}
+					};
+
+					declare("xcProject.widget.recommendation.Recommendation", Recommendation, {
+						debugstatesNode: null,
+						debugstates: null,
+						requiredStatesForPassingTest: null,
+
+						constructor: function(){
+							this.requiredStatesForPassingTest = [
+								"linkTracked","onmouseup","onmousedown"//"onclick","eventClick","eventClickNotFixed","eventDelegationClick"
+							];
+							this.debugstates = {};
+						},
+						postCreate: function(){
+							this.inherited(arguments);
+							this.own(
+								this.watch(lang.hitch(this, "handleAnyPropertyChange"))
+								//aspect.after(this, "_set", lang.hitch(this, "handleAnyPropertyChange"))
+							);
+							debugRecommendationWidgets[this.product.id] = this;
+						},
+						handleAnyPropertyChange: function(property, oldValue, newValue){
+							this._propagatePropertyAsCssClass(property);
+							this._propagatePropertyAsDebugState(property);
+						},
+						_propagatePropertyAsCssClass: function(property){
+							domClass.toggle(this.domNode, "is_"+property, !!this.get(property));
+						},
+						_propagatePropertyAsDebugState: function(property){
+							var d = this.debugstates;
+							d[property] = d[property] || 0;
+							d[property] += !!this.get(property) ? 1 : -1;
+							d[property] < 0 && (d[property]=0);
+							var prop, innerHtml = [];
+							for(prop in d){
+								innerHtml.push(prop+":"+d[prop]);
+							}
+							this.debugstatesNode.innerHTML = innerHtml.join(", ");
+
+
+							this.passed = array.every(this.requiredStatesForPassingTest, function(property){
+								console.log(property, !!d[property]);
+								return !!d[property]
+							});
+							this._propagatePropertyAsCssClass("passed");
+						}
+					});
+				}());
+
+				//IIFE
+				(function afterSetupLinkTrackerTest(){
+					parser.parse().then(function onParseDone(){
+
+						//.refresh() will iterate over xcInitials data and create Recommendation widget instances accordingly
+						// each Recommendation instance will tell the linkTracker to watch is external links
+						xcWidgetRegistry.byInstanceOf(Recommendations).forEach(function(w){w.refresh();});
+
+
+
+						//IIFE
+						(function eventTests(){
+							//does custom stuff on direct link click
+							query("a").forEach(function(a){
+
+								on(a, "mousedown", function(e){
+									getEnclosingWidgetAndSetState(this, "alt", e.altKey);
+									getEnclosingWidgetAndSetState(this, "shift", e.shiftKey);
+									getEnclosingWidgetAndSetState(this, "ctrl", e.ctrlKey);
+								});
+
+								aspect.after(a,"onclick",function(){
+									getEnclosingWidgetAndSetState(this, "onclick", true);
+								});
+								aspect.after(a,"onmousedown",function(){
+									getEnclosingWidgetAndSetState(this, "onmousedown", true);
+								});
+								aspect.after(a,"onmouseup",function(){
+									getEnclosingWidgetAndSetState(this, "onmouseup", true);
+								});
+
+								on(a, "click", function(e){getEnclosingWidgetAndSetState(e,"eventClick", true);});
+								on(a, "click", function(e){getEnclosingWidgetAndSetState(e,"eventClickNotFixed", true);}, true);
+							});
+
+							//eventDelegation check and avoid execution of links
+							on(document,"a:click", function(e){
+								getEnclosingWidgetAndSetState(e,"eventDelegationClick", true);
+								e.preventDefault();
+							});
+						}());
+					});
+				}());
+
+			});
+		});
+	});
+</script>
+<section>
+	<h2>Test links by clicking:</h2>
+	<ul>
+		<li>left mousebutton</li>
+		<li>shift + left mousebutton</li>
+		<li>ctrl + left mousebutton</li>
+		<li>right mousebutton</li>
+	</ul>
+	<div id="xc_application">
+		<div id="recommendations">
+			<h2>Recommendation Widgets</h2>
+			<div data-dojo-type="excentos.widget.recommendation.Recommendations"></div>
+		</div>
+	</div>
+</section>
+
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+
+// bootstrap border-radius mixins have only side-specific helpers.
+.border-radius(@radius: @borderRadius_base) {
+	-webkit-border-radius: @radius;
+	-moz-border-radius: @radius;
+	border-radius: @radius;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+}
+
+// bootstrap user-select vendor prefix doesn't have the "webkit-touch-callout" variant.  
+.unselectable() {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}	
+
+// a different implementation of opacity that in bootstrap (probably effectively the same)
+.opacity2 (@opacity) {
+    @opacityPercentage: @opacity * 100;
+    opacity: @opacity;
+    -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=(@{opacityPercentage}))";
+}
+
+// a fix for IE7 inline-block:
+.inline-block(){
+	display: inline-block;
+	.dj_ie7 & {
+		display: inline;
+		zoom: 1;
+	}
+}
+
+.transform(@string){
+	-webkit-transform: @string;
+	   -moz-transform: @string;
+	    -ms-transform: @string;
+	     -o-transform: @string;
+	        transform: @string;
+}
+
+
+
+//TODO: create namespace for arrow which contains the submixins
+//TODO: try again on just redefinig properties eg.  call #cssarrow > .top(); sets  @var1:bottom,@var2:left;  used as border-@{var2}-color
+
+.cssarrow-base(@size:10px, @color:#fff, @bordercolor:#000, @bordersize:1px, @position:relative){
+	@innerSize: @size - @bordersize;
+	@test: @size;
+
+	position: @position;
+	background: @color;
+	border: @bordersize solid @bordercolor;
+
+	&:after, &:before {
+		border: solid transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		top: auto;
+		bottom: auto;
+		left: auto;
+		right: auto;
+		pointer-events: none;
+		border-width: @innerSize; 
+	}
+	&:before {border-width: @size;}
+}
+.cssarrow-top(@size:10px, @color:#fff, @bordercolor:#000, @bordersize:1px, @position:relative){
+	.cssarrow-base(@size, @color, @bordercolor, @bordersize, @position);
+	&:after,&:before{
+		bottom: 100%;
+		left: 50%;
+		border-bottom-color: @color;
+		margin-left: -@innerSize;
+	}
+	&:before {
+		margin-left: -@size;
+		border-bottom-color: @bordercolor;
+	}
+}
+.cssarrow-bottom(@size:10px, @color:#fff, @bordercolor:#000, @bordersize:1px, @position:relative){
+	.cssarrow-base(@size, @color, @bordercolor, @bordersize, @position);
+	&:after,&:before{
+		top: 100%;
+		left: 50%;
+		border-top-color: @color;
+		margin-left: -@innerSize;
+	}
+	&:before {
+		margin-left: -@size;
+		border-top-color: @bordercolor;
+	}
+}
+.cssarrow-right(@size:10px, @color:#fff, @bordercolor:#000, @bordersize:1px, @position:relative){
+	.cssarrow-base(@size, @color, @bordercolor, @bordersize, @position);
+	&:after,&:before{
+		left: 100%;
+		top: 50%;
+		border-left-color: @color;
+		margin-top: -@innerSize;
+	}
+	&:before {
+		margin-top: -@size;
+		border-left-color: @bordercolor;
+	}
+}
+.cssarrow-left(@size:10px, @color:#fff, @bordercolor:#000, @bordersize:1px, @position:relative){
+	.cssarrow-base(@size, @color, @bordercolor, @bordersize, @position);
+	&:after,&:before{
+		right: 100%;
+		top: 50%;
+		border-right-color: @color;
+		margin-top: -@innerSize;
+	}
+	&:before {
+		margin-top: -@size;
+		border-right-color: @bordercolor;
+	}
+}
+
+
+// MEDIA QUERY QUICK CALLS
+@mediaQuery_ipad:	~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
+					~"only screen and (min--moz-device-pixel-ratio: 1.5)",
+					~"only screen and (-o-min-device-pixel-ratio: 3/2)",
+					~"only screen and (min-device-pixel-ratio: 1.5)";
+
+@mediaQuery_ipad_retina:	~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
+							~"only screen and (min--moz-device-pixel-ratio: 1.5)",
+							~"only screen and (-o-min-device-pixel-ratio: 3/2)",
+							~"only screen and (min-device-pixel-ratio: 1.5)";
+							
+//+1.4.0 generate-pattern
+.generate(@selector,@rule) {
+  @inject:~"@{selector} {@{rule}}";
+  @output: ~"{@{inject}} .__generated__";
+  @{output} {/*generated*/}
+}
+

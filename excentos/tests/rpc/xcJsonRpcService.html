@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<!--Lade die config und servicedefinition vom lokal laufenden Server -->
+<script>
+	document.write(
+		"<script src=../../../../../"+
+		prompt('Enter currently running app!','app_')+
+		"/service.jsinit?lang=de><"+"/script>"
+	);
+</script>
+
+<script type="text/javascript" src="../../../dojotoolkit/dojo/dojo.js" djConfig="isDebug: true, parseOnLoad: true, noFirebugLite : false"></script>
+
+<style>
+	.xc_preloader{display:none;}
+
+	#resultsbox{position:absolute; left: 440px; top: 10px; min-width: 400px; min-height: 300px; border: 1px solid black;}
+
+		/* styles from highlight (see internal highlight package test) */
+		pre code[class]:after {
+		  display: block; text-align: right;
+		  font-size: smaller;
+		  color: #CCC; background: white;
+		  border-top: solid 1px;
+		  padding-top: 0.5em;
+		}
+		
+		pre code {
+		  display: block;
+		  white-space: normal;
+		}
+		
+		code {
+		  background: #F0F0F0;
+		}
+		
+		pre code, 
+		.ruby .subst {
+		  color: black;
+		}
+
+</style>
+
+<script type="text/javascript">
+
+	dojo.require("dojox.highlight.languages.javascript");
+	dojo.require("doh.runner");
+
+	dojo.require("excentos.util");
+	xcUtil = new excentos.util();
+	xcUtil.buildAppUris();
+	
+	// TODO doku und probieren ob es geht.
+	dojo.require("excentos.rpc.xcJsonRpcService");
+	//dojo.require("excentos.tests.rpc.xcJsonRpcService");
+
+	//initialize the excentos-specific JSON-RPC Service:
+	xcService = new excentos.rpc.xcJsonRpcService(excentos.xcConfig.serviceSmd);
+	// umgebaut auf Uri-einzelkomponenten:
+	
+	
+	xcService.serviceUrl = "/BlueTomato/app_snowboard/JsonServlet/";
+	//xcService.serviceUrl = "/BlueTomato/app_snowboard/JSON-RPC/";
+	
+	dojo.addOnLoad(function(){
+		doh.register("excentos.rpc.xcJsonRpcService",
+			[
+				{
+					name: "testTestFramework",
+					runTest: function(t){
+						doh.is(true, true);
+					}
+				},
+				{
+					name: "getAllFacets() - minicheck",
+					timeout: 2000,
+					runTest: function(){
+						var d = new doh.Deferred();
+						
+						// build a param object (not used here):
+						var _params = {
+								"nix" : "auch nix",
+								"zahl" : 99
+						}
+						
+						// Call a method on the server using the params:
+						var _handle = xcService.getAllFacets();
+						
+						// Add a Callback method that checks whether the params match the request
+						_handle.addCallbacks(function(result) {
+							var hasPassed = true;
+							var errMsg = "";
+
+							handleResult(result, "minicheck");
+							
+							if(typeof result.facets.payloads[0].answered == "undefined"){
+								hasPassed = false;
+								errMsg += "first Facet does not have an answered attribute<br>";
+							}
+							
+							if(hasPassed){
+								return true;
+							}else{
+								return new Error(errMsg);
+							}
+						// Boilerplate:
+						}, function(result){
+							return new Error(result);
+						});
+						_handle.addBoth(d, "callback");
+						return d;
+					}
+	
+				}	
+			]	
+		);
+
+		var tests = doh._groups["excentos.rpc.xcJsonRpcService"];
+		var wrapper = dojo.byId("teststartbuttonswrapper");
+		for (var i = 0; i < tests.length; i++){
+			var test = tests[i];
+			console.dir(test);
+			var button = dojo.create(	"input", 
+										{ type: "button", value: test.name+"()"},
+										wrapper,
+										"last");
+			dojo.connect(button, "onclick", test, "runTest");
+			dojo.create("br", null, wrapper, "last");
+		}
+
+
+		var methods = xcService.smd.methods;
+		for (var i = 0; i < methods.length; i++){
+			var option = dojo.create(	"option", 
+					{value: methods[i].name,
+					innerHTML : methods[i].name+"()"},
+					dojo.byId("methodselect"),
+					"last");	
+			dojo.connect(option, "onclick", null, "preFillParams");		
+		}
+		
+		// run automatically if you're a frame inside the doh autorunner
+		console.clear();
+		if (document.referrer.indexOf("/doh/runner") > 0) doh.run();
+	});
+
+	function handleResult(result, testname){
+		// only  if you're not a frame inside the doh autorunner
+		if (document.referrer.indexOf("/doh/runner") < 0){
+			console.clear();
+			console.debug("SERVER ANSWER:");
+			console.dir(result);
+			var resultsbox = dojo.byId("resultsbox");
+			var code = dojo.toJson(result);
+			resultsbox.innerHTML = code.replace(/\,/g,", ").replace(/{/g,"{<br>").replace(/}/g,"}<br>");
+			dojo.byId("resultsbox").forEach(dojox.highlight.init);
+		};		
+	};
+
+	function sendEcho(){
+		//  call parameter 'params' must be a JSON array
+		var callParameter = dojo.fromJson('[{"message":"ping?"}]');
+		var _handle = xcService.callRemote("echo", callParameter);
+		
+		// Add a Callback method that checks whether the params match the request
+		_handle.addBoth(function(result) {
+			handleResult(result, "");
+		});
+	};
+
+	// send JSON RPC
+	function sendJsonRpcRequest(){
+		requestObj = dojo.fromJson(dojo.byId("requestcode").value);
+		//alert(requestObj.toString());
+		var methodname = dojo.byId("methodselect").value;
+		// Call a method on the server using the params:
+		var _handle = xcService.callRemote(methodname, requestObj);
+		
+		// Add a Callback method that checks whether the params match the request
+		_handle.addBoth(function(result) {
+			handleResult(result, "");
+		});
+	};
+
+	// print out parameter of selected RPC method
+	function preFillParams(){
+		var template = "[\n";
+		var methodname = dojo.byId("methodselect").value;		
+		var methods = xcService.smd.methods;
+		for (var i = 0; i < methods.length; i++){
+			if(methods[i].name == methodname){
+				for (var j = 0; j < methods[i].parameters.length; j++){
+					template += " /* " + methods[i].parameters[j].name + "=*/  ,\n";
+				} 
+			}
+		}
+		template += "]";		
+		dojo.byId("requestcode").value = template;
+	};
+		
+
+		
+</script>
+
+<title>xcJsonRpcService Test</title>
+</head>
+<body>
+<h2>excentos.xcJsonRpcService Test</h2>
+<h3>Send any request:</h3>
+<form>
+	<select id="methodselect">
+	</select><br>
+	<textarea id="requestcode" cols="40" style="height: 200px"></textarea><br>
+	<input id="sendbutton"  type="button" value="abschicken (json-rpc)" onclick="sendJsonRpcRequest();"></input>
+</form>
+<form>
+	<input id="asd"  type="button" value="abschicken (echo)" onclick="sendEcho();"></input>
+</form>
+<h3>manual starters for automatic DOH tests:</h3>
+<div id="teststartbuttonswrapper"></div>
+<pre><code id="resultsbox" class="javascript"></code></pre>
+
+ 	
+</body>
+</html>

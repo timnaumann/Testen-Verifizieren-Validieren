@@ -1,0 +1,53 @@
+/****** Loader ******/
+#xc_loader {
+	width: 100%;
+	height: 100%; 
+	position: fixed;
+	top: -9999px; //we cant transition from display:none, so move the container out of view
+	left: 0;
+	z-index: 5;
+	background-color: #fff;
+	opacity: 0;
+	display: block;
+	
+	//see *1
+	.transition(opacity @transition-loader-duration, top 0s @transition-loader-duration;);
+  
+	&:after {
+		content: " ";
+		background: url(@image-loader-url) no-repeat;
+		position: absolute;
+		top: -9999px;  //we cant transition from display:none, so move the container out of view
+		left: 0;
+		opacity: 0;
+		display: block;
+		//see *1
+		.transition(opacity @transition-loader-duration, top 0s @transition-loader-duration;);		
+	}
+}
+
+/****** Transitions ******/
+.xc_transition_RootStageTransition {
+	#xc_loader,
+	&.xc_transition_wait #xc_loader:after {
+		top: 0;
+		opacity: 1;
+		//see *1
+		.transition(opacity @transition-loader-duration, top 0s @transition-loader-duration;);
+	}
+}
+
+//*1:
+//	Goal:
+// 	 We want to simply fadeIn the #xc_loader container when a certain class is applied (.xc_transtion_RootStageTransition)
+//	 Until that point in time the #xc_loader is not visible
+//  Approach:
+//   - Can't just use opacity:0 for hiding the element, because the (fullscreen) #xc_loader would block all pointer events 
+//		TODO: provide test with pointer-events:none; for mobile - its implemented even in relatively old desktop browsers
+//	   Therefore we are moving the element way out of view (top:-9999px) and moving it into view again when the according class
+//	   (.xc_transition_RootStageTransition) is being applied by simply doing a  top: 0;
+//   - Applying a general css3 transition to  #xc_loader {... transition: opacity .5s; } turns out to be working only when
+//	   the #xc_loader is getting displayed. In case the overlay should be hidden (because we are done transitioning)
+//	   the container disappears instantly (because top:-9999px is taking over again!).
+
+//	

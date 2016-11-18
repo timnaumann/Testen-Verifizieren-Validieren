@@ -1,0 +1,47 @@
+//********** explanation styles ********//
+
+.xc_state {
+	&.xc_has_explanation {
+		.xc_label_wrapper {
+			#wrapper_state_hasexplanation();
+		}
+		.xc_explanation_trigger > span {
+			display: block;		// force clickable area
+			.isClickable();
+			#explanation_trigger();
+		}
+	}
+	&.xc_explanation_triggered {
+		.xc_explanation_trigger > span {
+			#explanation_trigger_active();
+		}
+	}
+}
+
+.xc_explanation_widget {
+	#wrapper_explanation();
+}
+.xc_enrichment_title {
+	#explanation_title();
+}
+
+.xc_enrichment_image{
+	position: relative;
+	&:before {
+		content: "";
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		position: absolute;
+		#explanation_loader();
+	}
+	.xc_image_container {
+		position: relative;		// keeps the loader behind the image 
+	}
+	#explanation_image();
+}
+
+.xc_enrichment_text{
+	#explanation_text();
+}

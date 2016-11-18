@@ -1,0 +1,42 @@
+.xc_application {		// internal reset
+	* {
+		.box-sizing(border-box);		// Sets "logical" box-sizing (i.e 100px width + 20px padding + 5px border == 100px)
+		-webkit-tap-highlight-color: rgba(0,0,0,0);		// remove tap highlight - real browsers
+		// -webkit-backface-visibility: hidden;  // <-- causes extra spacing on recommendation filters
+		margin: 0;
+		padding: 0;
+		outline: 0;
+
+// to remove tap highlight from IEmobile we need the following metatag added to the page. A client task as it will effect the entire page.
+//<meta name="msapplication-tap-highlight" content="no"/>
+
+	}	
+}
+
+//********** Wizard ***********//
+#xc_wizard {
+	position: relative;
+	overflow-x: hidden;		// required to prevent horizontal scroll from slider labels !! (TODO: for portrait only??)
+	#wrapper_page();
+}
+
+//********** Topic/Stage ***********//
+.xc_stage {
+	position: relative;
+	#wrapper_stage();
+
+	.xc_topic_header {
+		position: relative;
+		#wrapper_header();
+		.xc_topic_headline {
+			#header_page();
+		}
+	}
+
+	.xc_wrapper_questions {
+		#wrapper_questions();
+		.xc_topic_label {
+			#header_stage();
+		}
+	}
+}

@@ -1,0 +1,21 @@
+<div class="xc_recommendation">
+	
+	<div class="xc_product">
+		<div class="xc_product_image_wrapper">
+			<div class="xc_product_image" %{image.large$widthDp=100&heightDp=100:imageServerProductImage} data-dojo-attach-event="onclick:openImageZoom"></div>
+		</div>
+	
+		<div class="xc_product_details_wrapper">
+			<a class="xc_product_label" href="%{product.detailsPageUrl}">%{product.label}</a>
+			<div class="xc_product_sidebox">
+				<div class="xc_product_price">%{product.priceLabel}</div>
+				<a class="xc_product_link" href="%{product.detailsPageUrl}">%{!i18n.product_detailspagelink}</a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="xc_reasons" data-dojo-attach-point="reasonsNode">
+		<!-- list of reasons with CSS classes "xc_pro" and "xc_con" will be inserted here -->
+	</div>
+
+</div>

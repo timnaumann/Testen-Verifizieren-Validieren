@@ -1,0 +1,14 @@
+<div class="xc_enrichment xc_enrichment_category">
+	<div class="xc_enrichment_type xc_enrichment_title">%{!data.contentItems.explanation_title}</div>
+	
+	<div class="xc_enrichment_type xc_enrichment_image">
+		<div class="xc_image_container" 
+			%{data.contentItems.explanation_image$aspectRatioPercent=186&widthPaddingPx=0:availableWidthImageBackground}>
+		</div>
+		
+		<div class="xc_playicon_overlay"
+			onclick="excentos.shared.behavior.showVideoDialog('%{data.contentItems.explanation_video}','%{data.contentItems.explanation_video_title}')"
+		></div>
+	</div>
+	<div class="xc_enrichment_type xc_enrichment_text">%{!data.contentItems.explanation_text}</div>
+</div>

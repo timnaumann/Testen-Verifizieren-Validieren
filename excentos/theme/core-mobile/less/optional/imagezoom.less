@@ -1,0 +1,65 @@
+
+@import "../mandatory/dialog.less";
+
+//********** ImageZoom ***********//
+.xc_recommendation .xc_product_image {
+	cursor: pointer;
+	position: relative;
+	
+	//zoom-symbol
+	&:after {
+		@height: 20px;
+		width: @height;
+		height: @height;
+		.border-radius(@height/2);
+		font-size: @height;
+		line-height: @height; //vertical-align: middle trick 
+		text-align: center;
+		
+		content: "+";
+		display: block;
+		background: #333;
+		color: white;
+		
+		position: absolute;
+		bottom: 5px;
+		right: 5px;
+	}
+}
+
+.xc_image_zoom {
+	width: 100%;
+	
+	.dijitDialogTitleBar {
+		position: relative;
+	}
+	.dijitDialogCloseIcon {
+		position: absolute;
+		right: 8px;
+		top: -2px;
+		
+		&:after {
+			content:"x";
+			font-size: @font_large;
+		}
+	}
+	
+	.dijitDialogTitle {
+		text-align: center;
+		display: block;
+		font-size: @font_medium;
+		margin: 0 20px 20px;
+	}
+	
+	.dijitDialogPaneContent {
+		display: inline; //force to center - regardless of js calculated width/height
+	}
+	
+	.xc_zoomed_image {
+		text-align:center;
+		img { 
+			max-width: 100%;
+			max-height: 700px; //we need to set one side to a fixed size to avoid haevy oversizing in certain circumstances 
+		}
+	}
+}

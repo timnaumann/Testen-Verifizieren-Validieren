@@ -1,0 +1,477 @@
+// !!!NOTE!!!: when copying this file for project use remove "when (default())"
+
+//***** WRAPPERS *****//
+#wrapper_application() when (default()) {
+	min-height: 640px;
+}
+
+#wrapper_page() when (default()) {
+	.font(@font_medium);
+}
+#wrapper_stage() when (default()) {
+}
+
+#wrapper_header() when (default()) {
+	background: @background-darker url(../img/background-slider-dark.png);
+	min-height: 160px;
+}
+
+#wrapper_phasenavi() when (default()) {
+	bottom: @spacing_x-large;
+}
+#wrapper_stagenavi() when (default()) {
+}
+
+#wrapper_questions() when (default()) {
+}
+#wrapper_question() when (default()) {
+	margin-bottom: @spacing_x-large;
+}
+#wrapper_state() when (default()) {
+	margin-bottom: @spacing_medium;
+}
+#wrapper_state_hasexplanation() when (default()) {
+	padding-right: 55px;
+}
+
+#wrapper_option() when (default()) {
+	background: #505959;
+	padding-top: @spacing_medium;
+	padding-bottom: @spacing_medium;
+	padding-left: 45px;
+	padding-right: @spacing_medium;
+	color: @white;
+}
+#wrapper_explanation() when (default()) {
+	background-color: #ecf0f1;
+}
+
+#wrapper_refinement() when (default()) {
+}
+#wrapper_recommendations() when (default()) {
+	margin-top: @spacing_x-large;
+}
+#wrapper_recommendation() when (default()) {
+	margin-top: @spacing_x-large;
+    background: @background-light;
+    padding: @spacing_large @spacing_large @spacing_small @spacing_large;
+    margin: 0 0 @spacing_x-large 0;
+}
+
+//***** HEADERS *****//
+#header_page() when (default()) {
+	background: @background-dark;
+	color: @white;
+	.font(@font_xx-large, 43px);		// sets padding-top & padding-bottom
+	text-transform: uppercase;
+	display: inline-block;
+	padding-right: @spacing_x-large;
+	padding-left: @spacing_medium;
+	margin-top: @spacing_medium;
+	min-width: 140px;
+}
+#header_stage() when (default()) {
+	.font(@font_x-large);
+	margin-top: @spacing_xx-large;
+	margin-bottom:  @spacing_medium;
+}
+#header_question() when (default()) {
+	margin-bottom: @spacing_medium;
+}
+#header_recommendations() when (default()) {
+	.font(@font_large);
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: @spacing_x-large;
+}
+
+
+
+
+
+
+
+
+
+
+
+#option_label() when (default()) {
+	.font(@font_large);
+}
+#option_longtext() when (default()) {}
+
+
+
+
+//*****   INPUTS   *****//
+// Radio
+#input_radio() when (default()) {
+	position: absolute;
+	top: 7px;
+	left: @spacing_medium;
+	.input_radio_unselected();
+	#buildSprite();
+	background: @sprite;
+}
+#input_radio_checked() when (default()) {
+	.input_radio_selected();
+	#buildSprite();
+	background: @sprite;
+}
+
+// Checkbox
+#input_checkbox() when (default()) {
+	position: absolute;
+	top: 6px;
+	left: @spacing_medium;
+	.input_checkbox_unselected();
+	#buildSprite();
+	background: @sprite;
+}
+#input_checkbox_checked() when (default()) {
+	.input_checkbox_selected();
+	#buildSprite();
+	background: @sprite;
+}
+
+#input_slider() when (default()) {}
+
+#input_slider_track() when (default()) {
+	border: none;
+	background: @background-darker url(../img/background-slider-dark.png);
+	.border-radius(5px);
+	.box-shadow(inset 0px 1px 1px 0px rgba(50, 50, 50, 0.26));
+}
+#input_slider_handle() when (default()) {
+	.border-radius(18px);
+	.box-shadow(0px 1px 1px 0px rgba(50, 50, 50, 0.51));
+	.input_slider_handle;
+	#buildSprite();
+	background: @sprite;
+	background-color: @highlight;
+}
+#input_slider_handle_active() when (default()) {}
+#input_slider_popup() when (default()) {
+	background: @highlight;
+	padding: @spacing_medium @spacing_small;
+	.font(@font_medium);
+	color: @white;
+
+	position: absolute;
+	bottom: 50px;
+	text-align: center;
+	width: 100px;
+	&:after {
+		border-top-color: @highlight;
+	}
+}
+#input_slider_popup_active() when (default()) {}
+
+#input_slider_rulelabel() when (default()) {
+	white-space: nowrap;
+	padding-top: @spacing_x-large;
+}
+
+//*****   EXPLANATIONS   *****//
+#explanation_trigger() when (default()) {
+	position: absolute;
+	top: 0;
+	right: 0;
+	.icon_arrow_down; #buildSprite();
+	background: @background-darker @sprite;
+}
+#explanation_trigger_active() when (default()) {
+	.icon_arrow_up(); #buildSprite();
+	background: @background-darker @sprite;
+}
+#explanation_title() when (default()) {
+	display: none;	
+}
+#explanation_image() when (default()) {
+}
+#explanation_text() when (default()) {
+	.font(@font_x-small);
+	padding: @spacing_medium;
+}
+#explanation_loader() when (default()) {
+	background: url(@image-loader-url) no-repeat 50% 50%;
+	opacity: 0.18;
+}
+
+
+
+//*****   RECOMMENDATION   *****//
+#recommendation_productimage() when (default()) {
+    /* please don't set the actual image size here - use the template formatter to make sure the physical 
+    image size matches the CSS size */
+//	z-index: 2;
+	float: left;
+    background: @white;
+	padding: @spacing_small;
+	margin: 0 @spacing_medium @spacing_medium 0;
+	
+}
+#recommendation_label() when (default()) {
+	display: block;
+    text-decoration: none;
+	color: @font-on-light;
+	.font(@font_large);
+	font-weight: bold;
+	margin-bottom: @spacing_medium;
+}
+#recommendation_price() when (default()) {
+	color: #2E3435;
+	margin-bottom: @spacing_medium;
+}
+#recommendation_productlink() when (default()) {
+	.font(@font_medium);
+	margin-bottom: @spacing_medium;
+    color: @highlight;
+	float: right;
+	font-weight: bold;
+	text-decoration: none;
+	&:after {
+		content: "";
+		.icon_productLink(); #buildSprite();
+		background: @highlight @sprite;
+		.border-radius((@height/2));
+		display: inline-block;
+		vertical-align: middle;
+		margin-left: @spacing_small;
+	}
+}
+#recommendation_reason() when (default()) {
+	margin: 0 0 @spacing_small 0;
+	padding: 0 0 0 @spacing_large;
+	.font(@font_x-small);
+	&:before {
+		content: "";
+		position: absolute;
+		left: 0;
+	}
+}
+#recommendation_reason_pro() when (default()) {
+	&:before {
+		.recommendation_reason_pro();
+		#buildSprite();
+		background: @sprite;
+	}
+}
+#recommendation_reason_con() when (default()) {
+	&:before {
+		.recommendation_reason_con;
+		#buildSprite();
+		background: @sprite;
+	}
+}
+#recommendation_reason_neutral() when (default()) {
+	&:before {
+		.recommendation_reason_neutral;
+		#buildSprite();
+		background: @sprite;
+	}
+}
+#recommendation_reason_nearly() when (default()) {
+	&:before {
+		content:"~ ";
+	}
+}
+#recommendation_reason_unknown() when (default()) {
+	&:before {
+		content:"?";
+	}
+}
+
+
+
+
+#refinement_wrapper() when (default()) {
+}
+#refinement_button() when (default()) {
+	position: relative;
+	background: @background-medium;
+	color: @background-light;
+	.font(@font_x-large, 45px);
+	padding-left: @spacing_medium;
+	margin-bottom: 0px;
+	&:after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		.icon_arrow_down();#buildSprite();
+		background: @background-darker @sprite;
+	}
+}
+#refinement_button_active() when (default()) {
+	.icon_arrow_up();#buildSprite();
+	background: @font-on-light @sprite;
+}
+#refinement_option_wrapper() when (default()) {
+	background: @background-medium;
+	.clearfix();
+}
+#refinement_option() when (default()) {
+	border-top: 1px solid #b2b2b2;
+	background: @background-light;
+	.font(@font_x-large, 45px);
+	padding-left: 12px;
+	padding-right: 40px;
+	&:after {
+		content: "";
+		.recommendation_filter_closed();#buildSprite();
+		background: @white @sprite;
+		.border-radius((@height/2));
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		margin-top: -11px;
+	}
+}
+#refinement_option_active() when (default()) {
+	&:after {
+		.recommendation_filter_open();#buildSprite();
+		background: @white @sprite;
+	}
+}
+#refinement_state_wrapper() when (default()) {
+	//background: @background-medium;
+}
+#refinement_state() when (default()) {
+	border-top: 1px solid @background-light;
+	
+}
+#refinement_question() when (default()) {
+	.font(@font_x-large, 45px) !important;
+	//padding-left: 26px;
+	padding-left: @spacing_medium;
+	padding-right: 10px;
+	background: @white;
+}
+
+
+
+
+//*****   PHASE NAVIGATION   *****//
+#phasenavi_trigger() when (default()) {
+	position: absolute;
+	top: 120px;
+	right: 0;
+	.phaseNavigation_handle(); #buildSprite();		// provides width & height
+	background: @background-dark @sprite;
+}
+#phasenavi_trigger_active() when (default()) {
+}
+#phasenavi_button() when (default()) {
+	color: @font-on-dark-highlight;
+	background: @background-dark;
+	padding: @spacing_medium;
+	.font(@font_medium, 40px);
+	text-transform: uppercase;
+	border-bottom: 1px solid @white;
+}
+#phasenavi_button_visited() when (default()) {
+}
+#phasenavi_button_hover() when (default()) {
+}
+#phasenavi_button_active() when (default()) {
+	color: @font-on-dark;
+	font-weight: bold;
+}
+
+
+
+//*****   STAGE NAVIGATION   *****//
+#stagenavi_button_next() when (default()) {
+	.font(@font_medium, 50px);
+	padding-left: @spacing_medium;
+	padding-right: @spacing_medium;
+	font-weight: bold;
+    text-align: center;
+    text-transform: lowercase;
+	margin: @spacing_medium auto;
+	color: @font-on-dark;
+	background-color: @highlight;
+	&:after {
+		content: " ";
+		position: absolute;
+		right: @spacing_medium;
+		top: 50%;
+		margin-top: -13px;
+		.border-radius(13px);
+		
+		.icon_arrow_right();
+		#buildSprite();
+		background: @sprite;
+	}
+}
+#stagenavi_button_prev() when (default()) {
+	.font(@font_medium, 50px);
+	padding-left: @spacing_medium;
+	padding-right: @spacing_medium;
+	font-weight: bold;
+    text-align: center;
+    text-transform: lowercase;
+	margin: @spacing_medium auto;
+	color: @font-on-dark;
+	background-color: @background-medium;
+	&:after {
+		content: " ";
+		position: absolute;
+		right: @spacing_medium;
+		top: 50%;
+		margin-top: -13px;
+		.border-radius(13px);
+		
+		.icon_arrow_left();
+		#buildSprite();
+		background: @sprite;
+	}
+}
+
+
+
+//*****   DIALOGS   *****//
+#dialog_wrapper() when (default()) {
+}
+#dialog_header() when (default()) {
+}
+#dialog_close() when (default()) {
+}
+#dialog_button() when (default()) {
+}
+#dialog_underlay() when (default()) {
+}
+
+
+
+//*****   MICROZOOM   *****//
+#zoom_open() when (default()) {
+	position: absolute;
+	bottom: @spacing_small;
+	right: @spacing_small;
+	.recommendation_result_zoom();
+	#buildSprite();
+	background: @background-medium @sprite;
+	.border-radius((@height/2));
+}
+#zoom_close() when (default()) {
+	.hideText();
+	position: fixed;
+	top: @spacing_medium;
+	right: @spacing_medium;
+	
+	.icon_zoom_close();
+	#buildSprite();
+	background: @background-medium @sprite;
+	.border-radius((@height/2));
+}
+#zoom_underlay() when (default()) {
+	background: @white;
+}
+#zoom_canvas() when (default()) {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color: white;
+}

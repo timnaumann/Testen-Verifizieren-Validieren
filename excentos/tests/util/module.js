@@ -1,0 +1,5 @@
+define([
+    "../globals",
+	"./util",
+	"./ElementHolder"
+]);

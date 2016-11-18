@@ -1,0 +1,12 @@
+{
+  "name": "clientProxy",
+  "version": "1.0.0",
+  "description": "Serves local xcAjaxclient installation through build projects for debugging/dev purposes",
+  "author": {
+    "name": "Marcel Lucas",
+    "email": "lucas@excentos.com"
+  },
+  "dependencies": {
+    "open": "^0.x"
+  }
+}
