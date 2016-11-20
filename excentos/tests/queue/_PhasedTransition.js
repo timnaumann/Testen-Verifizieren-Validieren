@@ -10,7 +10,7 @@ define([
 			timeout: 1000,
 			runTest: function(d) {
 				var deferred = new doh.Deferred();
-				
+
 				var transition = new _PhasedTransition().init();
 				var PHASES = transition.PHASES;
 				
