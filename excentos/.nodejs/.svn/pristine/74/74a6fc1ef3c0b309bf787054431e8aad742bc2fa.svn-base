@@ -1,1 +1,0 @@
-require("./symlinks").run();
