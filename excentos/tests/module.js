@@ -1,5 +1,4 @@
 define([
 	"./globals",
-	"./newtests/module",
-	"./queue/module"
+	"./newtests/module"
 ], function(){});

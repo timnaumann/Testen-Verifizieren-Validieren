@@ -1,5 +1,6 @@
 define([
    "../globals",
-    "./exampleTests",
+    "./NodeCoverageTests",
+    "./EdgeCoverageTests",
     "./integrationTests"
 ], function(){});
